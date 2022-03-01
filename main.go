@@ -1,7 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"github.com/adiatma85/go-tutorial-gorm/src"
+)
 
 func main() {
-	fmt.Println("HELLO WORLD")
+	src.Run()
 }

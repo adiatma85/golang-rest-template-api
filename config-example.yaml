@@ -1,0 +1,8 @@
+AppName: Go Tutorial Gorm
+Port: 5000
+
+Database:
+  Host: 127.0.0.1
+  Username: root
+  Password: root
+  Database: go-tutorial-gorm
