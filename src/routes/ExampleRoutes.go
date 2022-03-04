@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func ExampleRoutes(router *gin.Engine) {
+func ExampleRoutes(router *gin.RouterGroup) {
 	base := router.Group("example")
 	{
 		base.GET("/", func(c *gin.Context) {

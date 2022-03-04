@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/viper"
 )
 
+// Func to initialize configuration, mainly viper in server
 func Initialize() {
 	viper.SetConfigName("config")
 	viper.AddConfigPath(".")

@@ -12,12 +12,15 @@ import (
 func Run() {
 	// Configuration
 	config.Initialize()
+	// db := config.InitializeDatabase()
 
 	// Route
 	r := gin.Default()
+	v1Route := r.Group("api/v1")
 	// Initialize routes
-	routes.BaseRoutes(r)
-	routes.ExampleRoutes(r)
+	routes.BaseRoutes(v1Route)
+	routes.AuthRoutes(v1Route)
+	routes.ExampleRoutes(v1Route)
 
 	// Running the server
 	port := fmt.Sprint(":", viper.GetInt("port"))
