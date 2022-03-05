@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
+	"github.com/spf13/viper"
 )
 
 type JwtHelper interface {
@@ -25,9 +26,11 @@ type jwtHelper struct {
 
 // Function to initialize instance of jwt helper
 func NewJwtHelper() JwtHelper {
+	issuer := viper.GetString("Issuer")
+	secretKey := viper.GetString("JWTSecretKey")
 	return &jwtHelper{
-		issuer:    "",
-		secretKey: "",
+		secretKey: secretKey,
+		issuer:    issuer,
 	}
 }
 
