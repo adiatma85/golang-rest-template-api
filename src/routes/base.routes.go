@@ -1,14 +1,14 @@
 package routes
 
 import (
-	"github.com/adiatma85/go-tutorial-gorm/src/controller"
+	"github.com/adiatma85/go-tutorial-gorm/src/handler"
 	"github.com/gin-gonic/gin"
 )
 
 func BaseRoutes(router *gin.RouterGroup) {
 
 	// baseController
-	baseController := controller.NewBaseController()
+	baseController := handler.NewBaseHandler()
 
 	baseRoutes := router.Group("")
 	{

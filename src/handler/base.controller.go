@@ -1,4 +1,4 @@
-package controller
+package handler
 
 import (
 	"net/http"
@@ -14,7 +14,7 @@ type BaseController interface {
 type baseController struct {
 }
 
-func NewBaseController() BaseController {
+func NewBaseHandler() BaseController {
 	return &baseController{}
 }
 

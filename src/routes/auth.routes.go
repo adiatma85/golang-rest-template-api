@@ -1,14 +1,14 @@
 package routes
 
 import (
-	"github.com/adiatma85/go-tutorial-gorm/src/controller"
+	"github.com/adiatma85/go-tutorial-gorm/src/handler"
 	"github.com/gin-gonic/gin"
 )
 
 func AuthRoutes(router *gin.RouterGroup) {
 
 	// Authcontroller
-	authController := controller.NewAuthController()
+	authController := handler.NewAuthHandler()
 
 	// AuthRoutes
 	authRoutes := router.Group("api/auth")
