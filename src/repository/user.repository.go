@@ -11,7 +11,7 @@ type UserRepository interface {
 	InsertUser(user models.User) (models.User, error)
 	UpdateUser(user models.User) (models.User, error)
 	// VerifyCredential(email, password string) interface{}
-	// IsDuplicateEmail(email string) *gorm.DB
+	// IsDuplicateEmail(email string) bool
 	FindUserByEmail(email string) (models.User, error)
 }
 

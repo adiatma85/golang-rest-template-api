@@ -19,8 +19,13 @@ var (
 	userRepo    repository.UserRepository = repository.NewUserRepository(db)
 	jwtHelper   helper.JwtHelper          = helper.NewJwtHelper()
 	authService service.AuthService       = service.NewAuthService(userRepo)
-	authHandler handler.AuthController    = handler.NewAuthHandler(authService, jwtHelper)
+	userService service.UserService       = service.NewUserService(userRepo)
+	authHandler handler.AuthController    = handler.NewAuthHandler(authService, jwtHelper, userService)
 )
+
+func init() {
+	config.Initialize()
+}
 
 // Initialize the Server
 func Run() {
@@ -34,8 +39,8 @@ func Run() {
 			ctx.JSON(http.StatusOK, gin.H{
 				"success": true,
 				"message": "V1 API",
-				"data": nil,
-				"error": nil
+				"data":    nil,
+				"error":   nil,
 			})
 		})
 	}

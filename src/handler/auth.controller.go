@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/adiatma85/go-tutorial-gorm/src/helper"
 	"github.com/adiatma85/go-tutorial-gorm/src/service"
@@ -17,12 +18,14 @@ type AuthController interface {
 type authController struct {
 	authService service.AuthService
 	jwtHelper   helper.JwtHelper
+	userService service.UserService
 }
 
-func NewAuthHandler(authService service.AuthService, jwtHelper helper.JwtHelper) AuthController {
+func NewAuthHandler(authService service.AuthService, jwtHelper helper.JwtHelper, userService service.UserService) AuthController {
 	return &authController{
 		authService,
 		jwtHelper,
+		userService,
 	}
 }
 
@@ -43,7 +46,12 @@ func (c *authController) Login(ctx *gin.Context) {
 		return
 	}
 
-	// user service
+	user, _ := c.userService.FindUserByEmail(loginRequest.Email)
+	token := c.jwtHelper.GenerateToken(strconv.FormatInt(int64(user.ID), 10))
+	user.Token = token
+	response := helper.BuildSuccessResponse("succes login", user)
+
+	ctx.JSON(http.StatusOK, response)
 }
 
 func (c *authController) Register(ctx *gin.Context) {
@@ -57,4 +65,15 @@ func (c *authController) Register(ctx *gin.Context) {
 	}
 
 	// user service create
+	user, err := c.userService.CreateUser(registerRequest)
+	if err != nil {
+		response := helper.BuildFailedResponse("register failed", err)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, response)
+	}
+
+	token := c.jwtHelper.GenerateToken(strconv.FormatInt(int64(user.ID), 10))
+	user.Token = token
+	response := helper.BuildSuccessResponse("succes register", user)
+
+	ctx.JSON(http.StatusOK, response)
 }
