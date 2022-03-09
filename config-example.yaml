@@ -1,8 +1,17 @@
-AppName: Go Tutorial Gorm
-Port: 5000
+server:
+  port: "5000"
+  secret: "your secret here"
+  #release | debug
+  mode: "debug"
 
-Database:
-  Host: 127.0.0.1
-  Username: root
-  Password: root
-  Database: go-tutorial-gorm
+database:
+  # mysql | sqllite3 | postgres
+  driver: "mysql"
+  dbname: "go-tutorial-gorm"
+  username: "root"
+  password: "passwords"
+  host: "localhost"
+  port: "3306"
+  max_lifetime: 7200
+  max_open_conns: 150
+  max_idle_conns: 50
