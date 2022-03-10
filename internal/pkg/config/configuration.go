@@ -33,6 +33,7 @@ type ServerConnection struct {
 	Port   string
 	Secret string
 	Mode   string
+	Name   string
 }
 
 // Setup the configuration
