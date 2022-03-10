@@ -3,12 +3,12 @@ package users
 import (
 	"time"
 
-	"github.com/adiatma85/go-tutorial-gorm/internal/pkg/models"
+	"gorm.io/gorm"
 )
 
 // Struct for User Models
 type User struct {
-	models.Model
+	gorm.Model
 	Name     string `gorm:"type:varchar(100)" json:"-"`
 	Email    string `gorm:"type:varchar(100);unique;" json:"-"`
 	Password string `gorm:"type:varchar(100)" json:"-"`
