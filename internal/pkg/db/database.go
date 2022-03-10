@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/adiatma85/go-tutorial-gorm/internal/pkg/config"
-	"github.com/adiatma85/go-tutorial-gorm/internal/pkg/models/tasks"
+	"github.com/adiatma85/go-tutorial-gorm/internal/pkg/models/products"
 	"github.com/adiatma85/go-tutorial-gorm/internal/pkg/models/users"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
@@ -67,8 +67,7 @@ func SetupDB() {
 // AutoMigrate project models
 func migration() {
 	DB.AutoMigrate(&users.User{})
-	DB.AutoMigrate(&users.UserRole{})
-	DB.AutoMigrate(&tasks.Task{})
+	DB.AutoMigrate(&products.Product{})
 }
 
 func GetDB() *gorm.DB {

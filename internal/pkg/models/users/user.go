@@ -9,11 +9,10 @@ import (
 // Struct for User Models
 type User struct {
 	models.Model
-	Username  string   `gorm:"column:username;not null;unique_index:username" json:"username" form:"username"`
-	Firstname string   `gorm:"column:firstname;not null;" json:"firstname" form:"firstname"`
-	Lastname  string   `gorm:"column:lastname;not null;" json:"lastname" form:"lastname"`
-	Password  string   `gorm:"column:hash;not null;" json:"hash"`
-	Role      UserRole `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Name     string `gorm:"type:varchar(100)" json:"-"`
+	Email    string `gorm:"type:varchar(100);unique;" json:"-"`
+	Password string `gorm:"type:varchar(100)" json:"-"`
+	// Role     UserRole `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 // Renew Created_at and Updated_at before creating
