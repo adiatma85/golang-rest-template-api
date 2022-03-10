@@ -8,13 +8,29 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
+// Contract fot JWT Crypto Helper
+type JWTCryptoHelper interface {
+	GenerateToken(UserId string) (string, error)
+	ValidateToken(tokenString string) bool
+}
+
+// Struct for jwt custom claim
 type jwtCustomClaim struct {
 	UserID string `json:"user_id"`
 	jwt.StandardClaims
 }
 
+// Struct for JWTHelper
+type jwtCryptoHelper struct {
+}
+
+// Func to initialize new jwt crypto helper
+func NewJWTCrypto() JWTCryptoHelper {
+	return &jwtCryptoHelper{}
+}
+
 // Func to Generate Token with User ID as main issuer
-func GenerateToken(UserID string) (string, error) {
+func (helper *jwtCryptoHelper) GenerateToken(UserID string) (string, error) {
 	serverConfiguration := config.GetConfig().Server
 	claims := &jwtCustomClaim{
 		UserID,
@@ -33,7 +49,7 @@ func GenerateToken(UserID string) (string, error) {
 }
 
 // Func to validate token
-func ValidateToken(tokenString string) bool {
+func (helper *jwtCryptoHelper) ValidateToken(tokenString string) bool {
 	serverConfiguration := config.GetConfig().Server
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
