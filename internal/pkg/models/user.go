@@ -1,14 +1,12 @@
-package users
+package models
 
 import (
 	"time"
-
-	"gorm.io/gorm"
 )
 
 // Struct for User Models
 type User struct {
-	gorm.Model
+	Model
 	Name     string `gorm:"type:varchar(100)" json:"-"`
 	Email    string `gorm:"type:varchar(100);unique;" json:"-"`
 	Password string `gorm:"type:varchar(100)" json:"-"`

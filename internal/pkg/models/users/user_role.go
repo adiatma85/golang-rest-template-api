@@ -3,12 +3,12 @@ package users
 import (
 	"time"
 
-	"github.com/adiatma85/go-tutorial-gorm/internal/pkg/models"
+	"gorm.io/gorm"
 )
 
 // Struct for UserRole Models
 type UserRole struct {
-	models.Model
+	gorm.Model
 	UserID   uint64 `gorm:"column:user_id;unique_index:user_role;not null;" json:"user_id"`
 	RoleName string `gorm:"column:role_name;not null;" json:"role_name"`
 }
