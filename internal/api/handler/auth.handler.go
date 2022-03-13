@@ -1,17 +1,74 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 
+	"github.com/adiatma85/go-tutorial-gorm/internal/pkg/repository"
+	"github.com/adiatma85/go-tutorial-gorm/internal/pkg/validator"
+	"github.com/adiatma85/go-tutorial-gorm/pkg/crypto"
 	"github.com/adiatma85/go-tutorial-gorm/pkg/response"
 	"github.com/gin-gonic/gin"
 )
 
 // Func to handle Auth Login
 func AuthLoginHandler(c *gin.Context) {
-	c.JSON(http.StatusOK, response.BuildSuccessResponse("success login", nil))
+	var loginRequest validator.LoginRequest
+	err := c.ShouldBind(&loginRequest)
+
+	// Error when binding in validator
+	if err != nil {
+		response := response.BuildFailedResponse("failed to login", err.Error())
+		c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+		return
+	}
+
+	userRepo := repository.GetUserRepository()
+	// If user doesn't exist
+	if user, err := userRepo.GetByEmail(loginRequest.Email); err != nil {
+		response := response.BuildFailedResponse("failed to login", err.Error())
+		c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+		return
+	} else {
+		// Wrong password
+		passwordHelper := crypto.GetPasswordCryptoHelper()
+		if !passwordHelper.ComparePassword(user.Password, []byte(loginRequest.Password)) {
+			response := response.BuildFailedResponse("wrong credential", err.Error())
+			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+			return
+		}
+
+		// Correct password
+		tokenHelper := crypto.GetJWTCrypto()
+		token, _ := tokenHelper.GenerateToken(fmt.Sprint(user.ID))
+		response := response.BuildSuccessResponse("success login", token)
+		c.JSON(http.StatusOK, response)
+		return
+	}
 }
 
+// Func to handle Auth Register
 func AuthRegisterHandler(c *gin.Context) {
-	c.JSON(http.StatusOK, response.BuildSuccessResponse("success register", nil))
+	var registerRequest validator.RegisterRequest
+	err := c.ShouldBind(&registerRequest)
+
+	if err != nil {
+		response := response.BuildFailedResponse("failed to login", err.Error())
+		c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+		return
+	}
+
+	userRepo := repository.GetUserRepository()
+
+	if newUser, err := userRepo.Create(registerRequest); err != nil {
+		response := response.BuildFailedResponse("failed to register", err.Error())
+		c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+		return
+	} else {
+		tokenHelper := crypto.GetJWTCrypto()
+		token, _ := tokenHelper.GenerateToken(fmt.Sprint(newUser.ID))
+		response := response.BuildSuccessResponse("success login", token)
+		c.JSON(http.StatusOK, response)
+		return
+	}
 }

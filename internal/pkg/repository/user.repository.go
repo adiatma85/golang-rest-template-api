@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/adiatma85/go-tutorial-gorm/internal/pkg/models"
+	"github.com/adiatma85/go-tutorial-gorm/internal/pkg/validator"
 	"github.com/adiatma85/go-tutorial-gorm/pkg/crypto"
 )
 
@@ -16,7 +17,13 @@ var (
 
 // Contract of User Repository
 type UserRepositoryInterface interface {
-	Create(user models.User) (models.User, error)
+	Create(user validator.RegisterRequest) (models.User, error)
+	GetAll() (*[]models.User, error)
+	Query(q *models.User) (*[]models.User, error)
+	GetByEmail(email string) (*models.User, error)
+	GetById(userId string) (*models.User, error)
+	Update(user *models.User) error
+	Delete(user *models.User) error
 }
 
 // Struct to implements contract or interface
@@ -31,12 +38,23 @@ func GetUserRepository() UserRepositoryInterface {
 }
 
 // Func to Create User
-func (repo *UserRepository) Create(user models.User) (models.User, error) {
-	user.Password, err = crypto.HashAndSalt([]byte(user.Password))
+func (repo *UserRepository) Create(userRequest validator.RegisterRequest) (models.User, error) {
+	passwordHelper := crypto.GetPasswordCryptoHelper()
+
+	// Initialize model user
+	user := models.User{
+		Name:  userRequest.Name,
+		Email: userRequest.Email,
+	}
+	user.Password, err = passwordHelper.HashAndSalt([]byte(userRequest.Password))
 	if err != nil {
 		return models.User{}, err
 	}
-	Create(&user)
+	err := Create(&user)
+	// If error when transaction to database i.e duplicate email
+	if err != nil {
+		return models.User{}, err
+	}
 	return user, nil
 }
 
@@ -54,6 +72,18 @@ func (repo *UserRepository) Query(q *models.User) (*[]models.User, error) {
 	return &users, err
 }
 
+// Func to get single user from email
+func (repo *UserRepository) GetByEmail(email string) (*models.User, error) {
+	var user models.User
+	where := models.User{}
+	where.Email = email
+	_, err := First(&where, &user, []string{})
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
 // Func to Get User By Id
 func (repo *UserRepository) GetById(userId string) (*models.User, error) {
 	var user models.User
@@ -69,7 +99,8 @@ func (repo *UserRepository) GetById(userId string) (*models.User, error) {
 // Function to update user according to user schema defined
 func (repo *UserRepository) Update(user *models.User) error {
 	if user.Password != "" {
-		user.Password, err = crypto.HashAndSalt([]byte(user.Password))
+		passwordHelper := crypto.GetPasswordCryptoHelper()
+		user.Password, err = passwordHelper.HashAndSalt([]byte(user.Password))
 		if err != nil {
 			return err
 		}

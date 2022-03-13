@@ -2,6 +2,8 @@ package models
 
 import (
 	"time"
+
+	"gorm.io/gorm"
 )
 
 // Struct for User Models
@@ -14,14 +16,14 @@ type User struct {
 }
 
 // Renew Created_at and Updated_at before creating
-func (m *User) BeforeCreate() error {
+func (m *User) BeforeCreate(db *gorm.DB) error {
 	m.CreatedAt = time.Now()
 	m.UpdatedAt = time.Now()
 	return nil
 }
 
 // Renew Created_at and Updated_at before updating
-func (m *User) BeforeUpdate() error {
+func (m *User) BeforeUpdate(db *gorm.DB) error {
 	m.UpdatedAt = time.Now()
 	return nil
 }

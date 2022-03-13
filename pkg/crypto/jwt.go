@@ -8,6 +8,8 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
+var jwtHelper *jwtCryptoHelper
+
 // Contract fot JWT Crypto Helper
 type JWTCryptoHelper interface {
 	GenerateToken(UserId string) (string, error)
@@ -25,8 +27,11 @@ type jwtCryptoHelper struct {
 }
 
 // Func to initialize new jwt crypto helper
-func NewJWTCrypto() JWTCryptoHelper {
-	return &jwtCryptoHelper{}
+func GetJWTCrypto() JWTCryptoHelper {
+	if jwtHelper == nil {
+		jwtHelper = &jwtCryptoHelper{}
+	}
+	return jwtHelper
 }
 
 // Func to Generate Token with User ID as main issuer
@@ -41,9 +46,9 @@ func (helper *jwtCryptoHelper) GenerateToken(UserID string) (string, error) {
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodES256, claims)
-	t, err := token.SignedString([]byte(serverConfiguration.Secret))
+	t, err := token.SignedString(serverConfiguration.Secret)
 	if err != nil {
-		return "error creating token", err
+		return err.Error(), err
 	}
 	return t, nil
 }
