@@ -42,5 +42,15 @@ func Setup() *gin.Engine {
 	}
 
 	// UserGroup with "user" prefix
+	userGroup := v1Route.Group("users")
+	{
+		userGroup.GET("", handler.GetAllUser)
+		userGroup.POST("", handler.CreateUser)
+		userGroup.GET("query", handler.QueryUsers)
+		userGroup.GET(":userId", handler.GetSpecificUser)
+		userGroup.PUT(":userId", handler.UpdateSpecificUser)
+		userGroup.DELETE(":userId", handler.DeleteSpecificUser)
+		userGroup.DELETE("multi", handler.DeleteUsersWithIds)
+	}
 	return app
 }

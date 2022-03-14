@@ -14,7 +14,8 @@ func Create(value interface{}) error {
 
 // Common function to save in db
 func Save(value interface{}) error {
-	return db.GetDB().Save(value).Error
+	return db.GetDB().Updates(value).Error
+	// return db.GetDB().Save(value).Error
 }
 
 // Common function to get the first row

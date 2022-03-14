@@ -61,14 +61,14 @@ func (repo *UserRepository) Create(userRequest validator.RegisterRequest) (model
 // Func to get All User without Pagination
 func (repo *UserRepository) GetAll() (*[]models.User, error) {
 	var users []models.User
-	err := Find(&models.User{}, &users, []string{""}, "id asc")
+	err := Find(&models.User{}, &users, []string{}, "id asc")
 	return &users, err
 }
 
 // Func to get Query of WHERE withoud Pagination
 func (repo *UserRepository) Query(q *models.User) (*[]models.User, error) {
 	var users []models.User
-	err := Find(&q, &users, []string{""}, "id asc")
+	err := Find(&q, &users, []string{}, "id asc")
 	return &users, err
 }
 
@@ -112,7 +112,7 @@ func (repo *UserRepository) Update(user *models.User) error {
 			return err
 		}
 	}
-	return nil
+	return Save(user)
 }
 
 // Delete User By Model defined in controller
