@@ -45,8 +45,8 @@ func (helper *jwtCryptoHelper) GenerateToken(UserID string) (string, error) {
 			IssuedAt:  time.Now().Unix(),
 		},
 	}
-	token := jwt.NewWithClaims(jwt.SigningMethodES256, claims)
-	t, err := token.SignedString(serverConfiguration.Secret)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	t, err := token.SignedString([]byte(serverConfiguration.Secret))
 	if err != nil {
 		return err.Error(), err
 	}

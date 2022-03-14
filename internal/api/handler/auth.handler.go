@@ -40,8 +40,15 @@ func AuthLoginHandler(c *gin.Context) {
 
 		// Correct password
 		tokenHelper := crypto.GetJWTCrypto()
-		token, _ := tokenHelper.GenerateToken(fmt.Sprint(user.ID))
-		response := response.BuildSuccessResponse("success login", token)
+		token, err := tokenHelper.GenerateToken(fmt.Sprint(user.ID))
+		if err != nil {
+			response := response.BuildFailedResponse("wrong credential", err.Error())
+			c.AbortWithStatusJSON(http.StatusInternalServerError, response)
+			return
+		}
+		response := response.BuildSuccessResponse("success login", map[string]interface{}{
+			"token": token,
+		})
 		c.JSON(http.StatusOK, response)
 		return
 	}
@@ -53,7 +60,7 @@ func AuthRegisterHandler(c *gin.Context) {
 	err := c.ShouldBind(&registerRequest)
 
 	if err != nil {
-		response := response.BuildFailedResponse("failed to login", err.Error())
+		response := response.BuildFailedResponse("failed to register", err.Error())
 		c.AbortWithStatusJSON(http.StatusUnauthorized, response)
 		return
 	}
@@ -66,8 +73,15 @@ func AuthRegisterHandler(c *gin.Context) {
 		return
 	} else {
 		tokenHelper := crypto.GetJWTCrypto()
-		token, _ := tokenHelper.GenerateToken(fmt.Sprint(newUser.ID))
-		response := response.BuildSuccessResponse("success login", token)
+		token, err := tokenHelper.GenerateToken(fmt.Sprint(newUser.ID))
+		if err != nil {
+			response := response.BuildFailedResponse("wrong credential", err.Error())
+			c.AbortWithStatusJSON(http.StatusInternalServerError, response)
+			return
+		}
+		response := response.BuildSuccessResponse("success login", map[string]interface{}{
+			"token": token,
+		})
 		c.JSON(http.StatusOK, response)
 		return
 	}
