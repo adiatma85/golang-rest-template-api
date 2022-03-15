@@ -3,6 +3,7 @@ server:
   secret: "your secret here"
   #release | debug
   mode: "debug"
+  name: "your application name"
 
 database:
   # mysql | sqllite3 | postgres
