@@ -4,11 +4,13 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/adiatma85/go-tutorial-gorm/internal/pkg/models"
 	"github.com/adiatma85/go-tutorial-gorm/internal/pkg/repository"
 	"github.com/adiatma85/go-tutorial-gorm/internal/pkg/validator"
 	"github.com/adiatma85/go-tutorial-gorm/pkg/crypto"
 	"github.com/adiatma85/go-tutorial-gorm/pkg/response"
 	"github.com/gin-gonic/gin"
+	"github.com/mashingan/smapping"
 )
 
 // Func to handle Auth Login
@@ -66,8 +68,14 @@ func AuthRegisterHandler(c *gin.Context) {
 	}
 
 	userRepo := repository.GetUserRepository()
+	passwordHelper := crypto.GetPasswordCryptoHelper()
+	userModel := &models.User{}
 
-	if newUser, err := userRepo.Create(registerRequest); err != nil {
+	// smapping the struct
+	smapping.FillStruct(userModel, smapping.MapFields(&registerRequest))
+	userModel.Password, _ = passwordHelper.HashAndSalt([]byte(registerRequest.Password))
+
+	if newUser, err := userRepo.Create(*userModel); err != nil {
 		response := response.BuildFailedResponse("failed to register", err.Error())
 		c.AbortWithStatusJSON(http.StatusUnauthorized, response)
 		return

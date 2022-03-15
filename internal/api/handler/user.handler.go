@@ -11,6 +11,7 @@ import (
 	"github.com/adiatma85/go-tutorial-gorm/pkg/crypto"
 	"github.com/adiatma85/go-tutorial-gorm/pkg/response"
 	"github.com/gin-gonic/gin"
+	"github.com/mashingan/smapping"
 )
 
 // THIS WILL BE USER HANDLER, and only admin can do or
@@ -27,8 +28,14 @@ func CreateUser(c *gin.Context) {
 	}
 
 	userRepo := repository.GetUserRepository()
+	passwordHelper := crypto.GetPasswordCryptoHelper()
+	userModel := &models.User{}
 
-	if newUser, err := userRepo.Create(createUserRequest); err != nil {
+	// smapping the struct
+	smapping.FillStruct(userModel, smapping.MapFields(&createUserRequest))
+	userModel.Password, _ = passwordHelper.HashAndSalt([]byte(createUserRequest.Password))
+
+	if newUser, err := userRepo.Create(*userModel); err != nil {
 		response := response.BuildFailedResponse("failed to register", err.Error())
 		c.AbortWithStatusJSON(http.StatusUnauthorized, response)
 		return
@@ -79,7 +86,7 @@ func GetSpecificUser(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-// Func to Query User
+// Func to Query User NEED TO BE DEFINED
 func QueryUsers(c *gin.Context) {
 
 }
@@ -97,9 +104,9 @@ func UpdateSpecificUser(c *gin.Context) {
 
 	updateModel := &models.User{}
 
+	// smapping the update request to models
 	updateModel.ID, _ = strconv.ParseUint(c.Param("userId"), 10, 64)
-	updateModel.Name = updateRequest.Name
-	updateModel.Email = updateRequest.Email
+	smapping.FillStruct(updateModel, smapping.MapFields(&updateRequest))
 
 	userRepo := repository.GetUserRepository()
 	err = userRepo.Update(updateModel)

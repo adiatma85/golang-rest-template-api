@@ -5,7 +5,6 @@ import (
 	"strconv"
 
 	"github.com/adiatma85/go-tutorial-gorm/internal/pkg/models"
-	"github.com/adiatma85/go-tutorial-gorm/internal/pkg/validator"
 	"github.com/adiatma85/go-tutorial-gorm/pkg/crypto"
 )
 
@@ -17,7 +16,7 @@ var (
 
 // Contract of User Repository
 type UserRepositoryInterface interface {
-	Create(user validator.RegisterRequest) (models.User, error)
+	Create(user models.User) (models.User, error)
 	GetAll() (*[]models.User, error)
 	Query(q *models.User) (*[]models.User, error)
 	GetByEmail(email string) (*models.User, error)
@@ -38,15 +37,7 @@ func GetUserRepository() UserRepositoryInterface {
 }
 
 // Func to Create User
-func (repo *UserRepository) Create(userRequest validator.RegisterRequest) (models.User, error) {
-	passwordHelper := crypto.GetPasswordCryptoHelper()
-
-	// Initialize model user
-	user := models.User{
-		Name:  userRequest.Name,
-		Email: userRequest.Email,
-	}
-	user.Password, err = passwordHelper.HashAndSalt([]byte(userRequest.Password))
+func (repo *UserRepository) Create(user models.User) (models.User, error) {
 	if err != nil {
 		return models.User{}, err
 	}
