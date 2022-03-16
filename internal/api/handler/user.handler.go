@@ -88,7 +88,10 @@ func GetSpecificUser(c *gin.Context) {
 
 // Func to Query User NEED TO BE DEFINED
 func QueryUsers(c *gin.Context) {
-
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"success": "ok",
+		"message": "need revision for query users",
+	})
 }
 
 // Func to Update User,
@@ -138,5 +141,8 @@ func DeleteSpecificUser(c *gin.Context) {
 
 // Func to Delete User with array ids
 func DeleteUsersWithIds(c *gin.Context) {
-
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"success": "ok",
+		"message": "need revision for delete users",
+	})
 }

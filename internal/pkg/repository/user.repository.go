@@ -10,7 +10,6 @@ import (
 
 // Local variable
 var (
-	err            error
 	userRepository *UserRepository
 )
 

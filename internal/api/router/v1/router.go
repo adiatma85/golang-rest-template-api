@@ -31,6 +31,8 @@ func Setup() *gin.Engine {
 	app.NoMethod(middleware.NoMethodHandler())
 	app.NoRoute(middleware.NoRouteHandler())
 
+	// NEED TO ADD JWT MIDDLEWARE
+
 	// Routes for v1
 	v1Route := app.Group("/api/v1")
 
@@ -52,5 +54,18 @@ func Setup() *gin.Engine {
 		userGroup.DELETE(":userId", handler.DeleteSpecificUser)
 		userGroup.DELETE("multi", handler.DeleteUsersWithIds)
 	}
+
+	// ProductGroup
+	productrGroup := v1Route.Group("products")
+	{
+		productrGroup.GET("", handler.GetAllProduct)
+		productrGroup.POST("", handler.CreateProduct)
+		productrGroup.GET("query", handler.QueryProducts)
+		productrGroup.GET(":productId", handler.GetSpecificProduct)
+		productrGroup.PUT(":productId", handler.UpdateSpecificProduct)
+		productrGroup.DELETE(":productId", handler.DeleteSpecificProduct)
+		productrGroup.DELETE("multi", handler.DeleteProductsWithIds)
+	}
+
 	return app
 }
