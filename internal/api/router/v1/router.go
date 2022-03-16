@@ -58,13 +58,13 @@ func Setup() *gin.Engine {
 	// ProductGroup
 	productrGroup := v1Route.Group("products")
 	{
-		productrGroup.GET("", handler.GetAllProduct)
-		productrGroup.POST("", handler.CreateProduct)
-		productrGroup.GET("query", handler.QueryProducts)
-		productrGroup.GET(":productId", handler.GetSpecificProduct)
-		productrGroup.PUT(":productId", handler.UpdateSpecificProduct)
-		productrGroup.DELETE(":productId", handler.DeleteSpecificProduct)
-		productrGroup.DELETE("multi", handler.DeleteProductsWithIds)
+		productrGroup.GET("", middleware.AuthJWT(), handler.GetAllProduct)
+		productrGroup.POST("", middleware.AuthJWT(), handler.CreateProduct)
+		productrGroup.GET("query", middleware.AuthJWT(), handler.QueryProducts)
+		productrGroup.GET(":productId", middleware.AuthJWT(), handler.GetSpecificProduct)
+		productrGroup.PUT(":productId", middleware.AuthJWT(), handler.UpdateSpecificProduct)
+		productrGroup.DELETE(":productId", middleware.AuthJWT(), handler.DeleteSpecificProduct)
+		productrGroup.DELETE("multi", middleware.AuthJWT(), handler.DeleteProductsWithIds)
 	}
 
 	return app
