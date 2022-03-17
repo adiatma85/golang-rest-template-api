@@ -55,7 +55,7 @@ func (repo *UserRepository) GetAll() (*[]models.User, error) {
 	return &users, err
 }
 
-// Func to get Query of WHERE withoud Pagination
+// Func to get Query of WHERE with pagination
 func (repo *UserRepository) Query(q *models.User) (*[]models.User, error) {
 	var users []models.User
 	err := Find(&q, &users, []string{}, "id asc")

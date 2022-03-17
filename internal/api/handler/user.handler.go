@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -40,16 +39,7 @@ func CreateUser(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, response)
 		return
 	} else {
-		tokenHelper := crypto.GetJWTCrypto()
-		token, err := tokenHelper.GenerateToken(fmt.Sprint(newUser.ID))
-		if err != nil {
-			response := response.BuildFailedResponse("wrong credential", err.Error())
-			c.AbortWithStatusJSON(http.StatusInternalServerError, response)
-			return
-		}
-		response := response.BuildSuccessResponse("success login", map[string]interface{}{
-			"token": token,
-		})
+		response := response.BuildSuccessResponse("success login", newUser)
 		c.JSON(http.StatusOK, response)
 		return
 	}
@@ -86,12 +76,19 @@ func GetSpecificUser(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
+type RandomStruct struct {
+	Name []string
+}
+
 // Func to Query User NEED TO BE DEFINED
 func QueryUsers(c *gin.Context) {
-	c.JSON(http.StatusOK, map[string]interface{}{
-		"success": "ok",
-		"message": "need revision for query users",
-	})
+
+	// userRepo := repository.GetUserRepository()
+	// dari sini kita mengirim
+	// - model pagination (membutuhkan page dan limit dari query)
+	// - model user dimana kita bisa menaruh referensi hasil kita
+
+	// hal pertama yang harus kita buat adalah pagination helper
 }
 
 // Func to Update User,

@@ -41,7 +41,7 @@ func Update(where, value interface{}) error {
 }
 
 // Common function to find in db
-func Find(where interface{}, out interface{}, associations []string, orders ...string) error {
+func Find(where interface{}, output interface{}, associations []string, orders ...string) error {
 	db := db.GetDB()
 	for _, a := range associations {
 		db = db.Preload(a)
@@ -52,27 +52,22 @@ func Find(where interface{}, out interface{}, associations []string, orders ...s
 			db = db.Order(order)
 		}
 	}
-	return db.Find(out).Error
+	return db.Find(output).Error
 }
 
-// Common function to scan in db
-func Scan(model, where interface{}, out interface{}) (notFound bool, err error) {
-	err = db.GetDB().Model(model).Where(where).Scan(out).Error
-	if err != nil {
-		notFound = errors.Is(err, gorm.ErrRecordNotFound)
+// Common function to paginate by model in db
+func Query(where interface{}, output interface{}, limit int, offset int, associations []string, orders ...string) error {
+	db := db.GetDB()
+	for _, a := range associations {
+		db = db.Preload(a)
 	}
-	return
-}
-
-// Common function to scanlist in db
-func ScanList(model, where interface{}, out interface{}, orders ...string) error {
-	db := db.GetDB().Model(model).Where(where)
+	db = db.Where(where)
 	if len(orders) > 0 {
 		for _, order := range orders {
 			db = db.Order(order)
 		}
 	}
-	return db.Scan(out).Error
+	return db.Limit(limit).Offset(offset).Find(output).Error
 }
 
 // Common function to delete by model in db

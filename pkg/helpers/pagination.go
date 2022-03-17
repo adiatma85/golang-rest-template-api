@@ -1,41 +1,30 @@
 package helpers
 
-import (
-	"regexp"
-	"strconv"
-	"strings"
-)
+// Pagination struct for query result
+// For more reference, you can access https://dev.to/rafaelgfirmino/pagination-using-gorm-scopes-3k5f
+type Pagination struct {
+	Limit      int         `json:"limit,omitempty" query:"limit"`
+	Page       int         `json:"page,omitempty" query:"page"`
+	Sort       string      `json:"sort,omitempty" query:"sort"`
+	TotalRows  int64       `json:"total_rows,omitempty"`
+	TotalPages int         `json:"total_pages,omitempty"`
+	Rows       interface{} `json:"rows"`
+}
 
-// Offset returns the starting number of result for pagination
-func Offset(offset string) int {
-	offsetInt, err := strconv.Atoi(offset)
-	if err != nil {
-		offsetInt = 0
+// Func to get Offset for querying
+func (p *Pagination) GetOffset() int {
+	return 0
+}
+
+// Func to get Limit for querying. Default limit is 10
+func (p *Pagination) GetLimit() int {
+	if p.Limit == 0 {
+		p.Limit = 10
 	}
-	return offsetInt
+	return p.Limit
 }
 
-// Limit returns the number of result for pagination
-func Limit(limit string) int {
-	limitInt, err := strconv.Atoi(limit)
-	if err != nil {
-		limitInt = 25
-	}
-	return limitInt
-}
-
-// SortOrder returns the string for sorting and orderin data
-func SortOrder(table, sort, order string) string {
-	return table + "." + ToSnakeCase(sort) + " " + ToSnakeCase(order)
-}
-
-// ToSnakeCase changes string to database table
-func ToSnakeCase(str string) string {
-	var matchFirstCap = regexp.MustCompile("(.)([A-Z][a-z]+)")
-	var matchAllCap = regexp.MustCompile("([a-z0-9])([A-Z])")
-
-	snake := matchFirstCap.ReplaceAllString(str, "${1}_${2}")
-	snake = matchAllCap.ReplaceAllString(snake, "${1}_${2}")
-
-	return strings.ToLower(snake)
+// Func to get Offset for querying
+func (p *Pagination) GetPage() int {
+	return 0
 }

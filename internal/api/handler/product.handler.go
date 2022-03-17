@@ -34,7 +34,6 @@ func CreateProduct(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, response)
 		return
 	} else {
-
 		response := response.BuildSuccessResponse("success to create new product", newProduct)
 		c.JSON(http.StatusOK, response)
 		return
@@ -73,6 +72,7 @@ func GetSpecificProduct(c *gin.Context) {
 }
 
 // Func to Query User NEED TO BE DEFINED
+// NEXT IS THIS
 func QueryProducts(c *gin.Context) {
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"success": "ok",
