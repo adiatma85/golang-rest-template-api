@@ -8,12 +8,11 @@ import (
 	"github.com/adiatma85/go-tutorial-gorm/internal/pkg/repository"
 	"github.com/adiatma85/go-tutorial-gorm/internal/pkg/validator"
 	"github.com/adiatma85/go-tutorial-gorm/pkg/crypto"
+	"github.com/adiatma85/go-tutorial-gorm/pkg/helpers"
 	"github.com/adiatma85/go-tutorial-gorm/pkg/response"
 	"github.com/gin-gonic/gin"
 	"github.com/mashingan/smapping"
 )
-
-// THIS WILL BE USER HANDLER, and only admin can do or
 
 // Func to Create User, similar to #Register
 func CreateUser(c *gin.Context) {
@@ -76,19 +75,35 @@ func GetSpecificUser(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-type RandomStruct struct {
-	Name []string
-}
-
-// Func to Query User NEED TO BE DEFINED
+// Func to Query User with pagination
 func QueryUsers(c *gin.Context) {
+	pagination := helpers.Pagination{}
+	userRepo := repository.GetUserRepository()
+	queryPageLimit, isPageLimitExist := c.GetQuery("limit")
+	queryPage, isPageQueryExist := c.GetQuery("page")
 
-	// userRepo := repository.GetUserRepository()
-	// dari sini kita mengirim
-	// - model pagination (membutuhkan page dan limit dari query)
-	// - model user dimana kita bisa menaruh referensi hasil kita
+	if isPageQueryExist {
+		pagination.Page, _ = strconv.Atoi(queryPage)
+	} else {
+		pagination.Page = 1
+	}
 
-	// hal pertama yang harus kita buat adalah pagination helper
+	if isPageLimitExist {
+		pagination.Limit, _ = strconv.Atoi(queryPageLimit)
+	} else {
+		pagination.Limit = 10
+	}
+
+	users, err := userRepo.Query(&models.User{}, pagination)
+
+	if err != nil {
+		response := response.BuildFailedResponse("failed to fetch data", err.Error())
+		c.AbortWithStatusJSON(http.StatusInternalServerError, response)
+		return
+	}
+
+	response := response.BuildSuccessResponse("success to fetch data", users)
+	c.JSON(http.StatusOK, response)
 }
 
 // Func to Update User,

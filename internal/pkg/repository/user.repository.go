@@ -6,6 +6,7 @@ import (
 
 	"github.com/adiatma85/go-tutorial-gorm/internal/pkg/models"
 	"github.com/adiatma85/go-tutorial-gorm/pkg/crypto"
+	"github.com/adiatma85/go-tutorial-gorm/pkg/helpers"
 )
 
 // Local variable
@@ -17,7 +18,7 @@ var (
 type UserRepositoryInterface interface {
 	Create(user models.User) (models.User, error)
 	GetAll() (*[]models.User, error)
-	Query(q *models.User) (*[]models.User, error)
+	Query(q *models.User, pagination helpers.Pagination) (*helpers.Pagination, error)
 	GetByEmail(email string) (*models.User, error)
 	GetById(userId string) (*models.User, error)
 	Update(user *models.User) error
@@ -56,10 +57,10 @@ func (repo *UserRepository) GetAll() (*[]models.User, error) {
 }
 
 // Func to get Query of WHERE with pagination
-func (repo *UserRepository) Query(q *models.User) (*[]models.User, error) {
+func (repo *UserRepository) Query(q *models.User, pagination helpers.Pagination) (*helpers.Pagination, error) {
 	var users []models.User
-	err := Find(&q, &users, []string{}, "id asc")
-	return &users, err
+	outputPagination, _ := Query(q, &users, pagination, []string{})
+	return outputPagination, nil
 }
 
 // Func to get single user from email

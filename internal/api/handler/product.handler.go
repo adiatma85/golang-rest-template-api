@@ -7,6 +7,7 @@ import (
 	"github.com/adiatma85/go-tutorial-gorm/internal/pkg/models"
 	"github.com/adiatma85/go-tutorial-gorm/internal/pkg/repository"
 	"github.com/adiatma85/go-tutorial-gorm/internal/pkg/validator"
+	"github.com/adiatma85/go-tutorial-gorm/pkg/helpers"
 	"github.com/adiatma85/go-tutorial-gorm/pkg/response"
 	"github.com/gin-gonic/gin"
 	"github.com/mashingan/smapping"
@@ -71,13 +72,35 @@ func GetSpecificProduct(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-// Func to Query User NEED TO BE DEFINED
-// NEXT IS THIS
+// Func to Query Product with pagination
 func QueryProducts(c *gin.Context) {
-	c.JSON(http.StatusOK, map[string]interface{}{
-		"success": "ok",
-		"message": "need revision for query users",
-	})
+	pagination := helpers.Pagination{}
+	productRepo := repository.GetProductRepository()
+	queryPageLimit, isPageLimitExist := c.GetQuery("limit")
+	queryPage, isPageQueryExist := c.GetQuery("page")
+
+	if isPageQueryExist {
+		pagination.Page, _ = strconv.Atoi(queryPage)
+	} else {
+		pagination.Page = 1
+	}
+
+	if isPageLimitExist {
+		pagination.Limit, _ = strconv.Atoi(queryPageLimit)
+	} else {
+		pagination.Limit = 10
+	}
+
+	products, err := productRepo.Query(&models.Product{}, pagination)
+
+	if err != nil {
+		response := response.BuildFailedResponse("failed to fetch data", err.Error())
+		c.AbortWithStatusJSON(http.StatusInternalServerError, response)
+		return
+	}
+
+	response := response.BuildSuccessResponse("success to fetch data", products)
+	c.JSON(http.StatusOK, response)
 }
 
 // Func to Update Product,

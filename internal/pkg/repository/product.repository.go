@@ -4,6 +4,7 @@ import (
 	"strconv"
 
 	"github.com/adiatma85/go-tutorial-gorm/internal/pkg/models"
+	"github.com/adiatma85/go-tutorial-gorm/pkg/helpers"
 )
 
 // NEED TO FINALIZE PRODUCT REPOSITORY
@@ -20,7 +21,7 @@ type ProductRepository struct{}
 type ProductRepositoryInterface interface {
 	Create(product models.Product) (models.Product, error)
 	GetAll() (*[]models.Product, error)
-	Query(q *models.Product) (*[]models.Product, error)
+	Query(q *models.Product, pagination helpers.Pagination) (*helpers.Pagination, error)
 	GetByEmail(email string) (*models.Product, error)
 	GetById(productId string) (*models.Product, error)
 	Update(product *models.Product) error
@@ -55,11 +56,11 @@ func (repo *ProductRepository) GetAll() (*[]models.Product, error) {
 	return &users, err
 }
 
-// Func to get Query of WHERE withoud Pagination
-func (repo *ProductRepository) Query(q *models.Product) (*[]models.Product, error) {
-	var users []models.Product
-	err := Find(&q, &users, []string{}, "id asc")
-	return &users, err
+// Func to get Query of WHERE with Pagination
+func (repo *ProductRepository) Query(q *models.Product, pagination helpers.Pagination) (*helpers.Pagination, error) {
+	var products []models.Product
+	outputPagination, _ := Query(q, &products, pagination, []string{})
+	return outputPagination, nil
 }
 
 // Func to get single user from email

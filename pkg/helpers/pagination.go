@@ -13,7 +13,7 @@ type Pagination struct {
 
 // Func to get Offset for querying
 func (p *Pagination) GetOffset() int {
-	return 0
+	return (p.GetPage() - 1) * p.GetLimit()
 }
 
 // Func to get Limit for querying. Default limit is 10
@@ -26,5 +26,16 @@ func (p *Pagination) GetLimit() int {
 
 // Func to get Offset for querying
 func (p *Pagination) GetPage() int {
-	return 0
+	if p.Page == 0 {
+		p.Page = 1
+	}
+	return p.Page
+}
+
+// Func to get Sort
+func (p *Pagination) GetSort() string {
+	if p.Sort == "" {
+		p.Sort = "Id desc"
+	}
+	return p.Sort
 }

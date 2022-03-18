@@ -2,8 +2,10 @@ package repository
 
 import (
 	"errors"
+	"math"
 
 	"github.com/adiatma85/go-tutorial-gorm/internal/pkg/db"
+	"github.com/adiatma85/go-tutorial-gorm/pkg/helpers"
 	"gorm.io/gorm"
 )
 
@@ -56,18 +58,29 @@ func Find(where interface{}, output interface{}, associations []string, orders .
 }
 
 // Common function to paginate by model in db
-func Query(where interface{}, output interface{}, limit int, offset int, associations []string, orders ...string) error {
+func Query(where interface{}, output interface{}, pagination helpers.Pagination, associations []string) (*helpers.Pagination, error) {
 	db := db.GetDB()
+	// preload the associations
 	for _, a := range associations {
 		db = db.Preload(a)
 	}
-	db = db.Where(where)
-	if len(orders) > 0 {
-		for _, order := range orders {
-			db = db.Order(order)
-		}
+	db.Scopes(paginate(where, &pagination, db)).Find(output)
+	pagination.Rows = output
+	return &pagination, nil
+}
+
+// Func pagination for scope
+func paginate(value interface{}, pagination *helpers.Pagination, db *gorm.DB) func(db *gorm.DB) *gorm.DB {
+	var totalRows int64
+	db.Model(value).Count(&totalRows)
+
+	pagination.TotalRows = totalRows
+	totalPages := int(math.Ceil(float64(totalRows) / float64(pagination.Limit)))
+	pagination.TotalPages = totalPages
+
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Offset(pagination.GetOffset()).Limit(pagination.GetLimit()).Order(pagination.GetSort())
 	}
-	return db.Limit(limit).Offset(offset).Find(output).Error
 }
 
 // Common function to delete by model in db
