@@ -45,10 +45,8 @@ func Setup() *gin.Engine {
 	userGroup := v1Route.Group("users")
 	{
 		userGroup.GET("", middleware.AuthJWT(), handler.GetAllUser)
-		// userGroup.POST("", middleware.AuthJWT(), handler.CreateUser)
-		userGroup.POST("", handler.CreateUser)
-		// userGroup.GET("query", middleware.AuthJWT(), handler.QueryUsers)
-		userGroup.GET("query", handler.QueryUsers)
+		userGroup.POST("", middleware.AuthJWT(), handler.CreateUser)
+		userGroup.GET("query", middleware.AuthJWT(), handler.QueryUsers)
 		userGroup.GET(":userId", middleware.AuthJWT(), handler.GetSpecificUser)
 		userGroup.PUT(":userId", middleware.AuthJWT(), handler.UpdateSpecificUser)
 		userGroup.DELETE(":userId", middleware.AuthJWT(), handler.DeleteSpecificUser)

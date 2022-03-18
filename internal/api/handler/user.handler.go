@@ -153,6 +153,13 @@ func DeleteSpecificUser(c *gin.Context) {
 
 // Func to Delete User with array ids
 func DeleteUsersWithIds(c *gin.Context) {
+	var deleteRequest validator.DeleteUsersRequest
+	err := c.ShouldBind(&deleteRequest)
+	if err != nil {
+		response := response.BuildFailedResponse("failed to delete users", err.Error())
+		c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+		return
+	}
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"success": "ok",
 		"message": "need revision for delete users",

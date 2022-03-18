@@ -6,3 +6,8 @@ type UpdateUserRequest struct {
 	Email    string `json:"email" form:"email" validation:"email"`
 	Password string `json:"password" form:"password" validation:"password"`
 }
+
+// Struct that define the validator/binding of Delete Users by JSON Request
+type DeleteUsersRequest struct {
+	Ids []int `json:"ids" form:"ids"`
+}
