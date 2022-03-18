@@ -13,8 +13,34 @@ import (
 	"github.com/mashingan/smapping"
 )
 
+// Local variable
+var (
+	productHandler *ProductHandler
+)
+
+// Func to implement contract of productHandler
+type ProductHandler struct{}
+
+// Contract of Product Handler
+type ProductHandlerInterface interface {
+	CreateProduct(c *gin.Context)
+	GetAllProduct(c *gin.Context)
+	GetSpecificProduct(c *gin.Context)
+	QueryProducts(c *gin.Context)
+	UpdateSpecificProduct(c *gin.Context)
+	DeleteSpecificProduct(c *gin.Context)
+	DeleteProductsWithIds(c *gin.Context)
+}
+
+func GetProductHandler() ProductHandlerInterface {
+	if productHandler == nil {
+		productHandler = &ProductHandler{}
+	}
+	return productHandler
+}
+
 // Func to Create User, similar to #Register
-func CreateProduct(c *gin.Context) {
+func (handler *ProductHandler) CreateProduct(c *gin.Context) {
 	var createProductRequest validator.CreateProductRequest
 	err := c.ShouldBind(&createProductRequest)
 
@@ -42,7 +68,7 @@ func CreateProduct(c *gin.Context) {
 }
 
 // Func to GetAll User without in server pagination
-func GetAllProduct(c *gin.Context) {
+func (handler *ProductHandler) GetAllProduct(c *gin.Context) {
 	productRepo := repository.GetProductRepository()
 
 	products, err := productRepo.GetAll()
@@ -57,7 +83,7 @@ func GetAllProduct(c *gin.Context) {
 }
 
 // Func to GetSpecific Product
-func GetSpecificProduct(c *gin.Context) {
+func (handler *ProductHandler) GetSpecificProduct(c *gin.Context) {
 	productRepo := repository.GetProductRepository()
 
 	product, err := productRepo.GetById(c.Param("productId"))
@@ -73,7 +99,7 @@ func GetSpecificProduct(c *gin.Context) {
 }
 
 // Func to Query Product with pagination
-func QueryProducts(c *gin.Context) {
+func (handler *ProductHandler) QueryProducts(c *gin.Context) {
 	pagination := helpers.Pagination{}
 	productRepo := repository.GetProductRepository()
 	queryPageLimit, isPageLimitExist := c.GetQuery("limit")
@@ -104,7 +130,7 @@ func QueryProducts(c *gin.Context) {
 }
 
 // Func to Update Product,
-func UpdateSpecificProduct(c *gin.Context) {
+func (handler *ProductHandler) UpdateSpecificProduct(c *gin.Context) {
 	var updateRequest validator.UpdateProductRequest
 	err := c.ShouldBind(&updateRequest)
 
@@ -133,7 +159,7 @@ func UpdateSpecificProduct(c *gin.Context) {
 }
 
 // Func to Delete Specific Product
-func DeleteSpecificProduct(c *gin.Context) {
+func (handler *ProductHandler) DeleteSpecificProduct(c *gin.Context) {
 	deleteModel := &models.Product{}
 	deleteModel.ID, _ = strconv.ParseUint(c.Param("productId"), 10, 64)
 
@@ -149,7 +175,7 @@ func DeleteSpecificProduct(c *gin.Context) {
 }
 
 // Func to Delete Products with array ids
-func DeleteProductsWithIds(c *gin.Context) {
+func (handler *ProductHandler) DeleteProductsWithIds(c *gin.Context) {
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"success": "ok",
 		"message": "need revision for delete product",

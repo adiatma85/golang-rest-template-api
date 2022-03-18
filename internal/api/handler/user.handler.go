@@ -14,8 +14,34 @@ import (
 	"github.com/mashingan/smapping"
 )
 
+// Local variable
+var (
+	userHandler *UserHandler
+)
+
+// Func to implement contract of UserHandler
+type UserHandler struct{}
+
+// Contract of User Handler
+type UserHandlerInterface interface {
+	CreateUser(c *gin.Context)
+	GetAllUser(c *gin.Context)
+	GetSpecificUser(c *gin.Context)
+	QueryUsers(c *gin.Context)
+	UpdateSpecificUser(c *gin.Context)
+	DeleteSpecificUser(c *gin.Context)
+	DeleteUsersWithIds(c *gin.Context)
+}
+
+func GetUserHandler() UserHandlerInterface {
+	if userHandler == nil {
+		userHandler = &UserHandler{}
+	}
+	return userHandler
+}
+
 // Func to Create User, similar to #Register
-func CreateUser(c *gin.Context) {
+func (handler *UserHandler) CreateUser(c *gin.Context) {
 	var createUserRequest validator.RegisterRequest
 	err := c.ShouldBind(&createUserRequest)
 
@@ -45,7 +71,7 @@ func CreateUser(c *gin.Context) {
 }
 
 // Func to GetAll User without in server pagination
-func GetAllUser(c *gin.Context) {
+func (handler *UserHandler) GetAllUser(c *gin.Context) {
 	userRepo := repository.GetUserRepository()
 
 	users, err := userRepo.GetAll()
@@ -60,7 +86,7 @@ func GetAllUser(c *gin.Context) {
 }
 
 // Func to GetSpecific User
-func GetSpecificUser(c *gin.Context) {
+func (handler *UserHandler) GetSpecificUser(c *gin.Context) {
 	userRepo := repository.GetUserRepository()
 
 	user, err := userRepo.GetById(c.Param("userId"))
@@ -76,7 +102,7 @@ func GetSpecificUser(c *gin.Context) {
 }
 
 // Func to Query User with pagination
-func QueryUsers(c *gin.Context) {
+func (handler *UserHandler) QueryUsers(c *gin.Context) {
 	pagination := helpers.Pagination{}
 	userRepo := repository.GetUserRepository()
 	queryPageLimit, isPageLimitExist := c.GetQuery("limit")
@@ -107,7 +133,7 @@ func QueryUsers(c *gin.Context) {
 }
 
 // Func to Update User,
-func UpdateSpecificUser(c *gin.Context) {
+func (handler *UserHandler) UpdateSpecificUser(c *gin.Context) {
 	var updateRequest validator.UpdateUserRequest
 	err := c.ShouldBind(&updateRequest)
 
@@ -136,7 +162,7 @@ func UpdateSpecificUser(c *gin.Context) {
 }
 
 // Func to Delete Specific User
-func DeleteSpecificUser(c *gin.Context) {
+func (handler *UserHandler) DeleteSpecificUser(c *gin.Context) {
 	deleteModel := &models.User{}
 	deleteModel.ID, _ = strconv.ParseUint(c.Param("userId"), 10, 64)
 
@@ -152,7 +178,7 @@ func DeleteSpecificUser(c *gin.Context) {
 }
 
 // Func to Delete User with array ids
-func DeleteUsersWithIds(c *gin.Context) {
+func (handler *UserHandler) DeleteUsersWithIds(c *gin.Context) {
 	var deleteRequest validator.DeleteUsersRequest
 	err := c.ShouldBind(&deleteRequest)
 	if err != nil {

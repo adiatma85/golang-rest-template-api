@@ -13,7 +13,6 @@ func Setup() *gin.Engine {
 	app := gin.New()
 
 	// Middlewares
-	// Middlewares
 	app.Use(gin.LoggerWithFormatter(func(param gin.LogFormatterParams) string {
 		return fmt.Sprintf("%s - - [%s] \"%s %s %s %d %s \" \" %s\" \" %s\"\n",
 			param.ClientIP,
@@ -36,33 +35,36 @@ func Setup() *gin.Engine {
 
 	// AuthGroup with "auth" prefix
 	authGroup := v1Route.Group("auth")
+	authHandler := handler.GetAuthHandler()
 	{
-		authGroup.POST("login", handler.AuthLoginHandler)
-		authGroup.POST("register", handler.AuthRegisterHandler)
+		authGroup.POST("login", authHandler.AuthRegister)
+		authGroup.POST("register", authHandler.AuthLogin)
 	}
 
 	// UserGroup with "user" prefix
 	userGroup := v1Route.Group("users")
+	userHandler := handler.GetUserHandler()
 	{
-		userGroup.GET("", middleware.AuthJWT(), handler.GetAllUser)
-		userGroup.POST("", middleware.AuthJWT(), handler.CreateUser)
-		userGroup.GET("query", middleware.AuthJWT(), handler.QueryUsers)
-		userGroup.GET(":userId", middleware.AuthJWT(), handler.GetSpecificUser)
-		userGroup.PUT(":userId", middleware.AuthJWT(), handler.UpdateSpecificUser)
-		userGroup.DELETE(":userId", middleware.AuthJWT(), handler.DeleteSpecificUser)
-		userGroup.DELETE("multi", middleware.AuthJWT(), handler.DeleteUsersWithIds)
+		userGroup.GET("", middleware.AuthJWT(), userHandler.GetAllUser)
+		userGroup.POST("", middleware.AuthJWT(), userHandler.CreateUser)
+		userGroup.GET("query", middleware.AuthJWT(), userHandler.QueryUsers)
+		userGroup.GET(":userId", middleware.AuthJWT(), userHandler.GetSpecificUser)
+		userGroup.PUT(":userId", middleware.AuthJWT(), userHandler.UpdateSpecificUser)
+		userGroup.DELETE(":userId", middleware.AuthJWT(), userHandler.DeleteSpecificUser)
+		userGroup.DELETE("multi", middleware.AuthJWT(), userHandler.DeleteUsersWithIds)
 	}
 
 	// ProductGroup
 	productrGroup := v1Route.Group("products")
+	productHandler := handler.GetProductHandler()
 	{
-		productrGroup.GET("", middleware.AuthJWT(), handler.GetAllProduct)
-		productrGroup.POST("", middleware.AuthJWT(), handler.CreateProduct)
-		productrGroup.GET("query", middleware.AuthJWT(), handler.QueryProducts)
-		productrGroup.GET(":productId", middleware.AuthJWT(), handler.GetSpecificProduct)
-		productrGroup.PUT(":productId", middleware.AuthJWT(), handler.UpdateSpecificProduct)
-		productrGroup.DELETE(":productId", middleware.AuthJWT(), handler.DeleteSpecificProduct)
-		productrGroup.DELETE("multi", middleware.AuthJWT(), handler.DeleteProductsWithIds)
+		productrGroup.GET("", middleware.AuthJWT(), productHandler.GetAllProduct)
+		productrGroup.POST("", middleware.AuthJWT(), productHandler.CreateProduct)
+		productrGroup.GET("query", middleware.AuthJWT(), productHandler.QueryProducts)
+		productrGroup.GET(":productId", middleware.AuthJWT(), productHandler.GetSpecificProduct)
+		productrGroup.PUT(":productId", middleware.AuthJWT(), productHandler.UpdateSpecificProduct)
+		productrGroup.DELETE(":productId", middleware.AuthJWT(), productHandler.DeleteSpecificProduct)
+		productrGroup.DELETE("multi", middleware.AuthJWT(), productHandler.DeleteProductsWithIds)
 	}
 
 	return app

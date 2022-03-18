@@ -13,8 +13,30 @@ import (
 	"github.com/mashingan/smapping"
 )
 
+// Local variable
+var (
+	authHandler *AuthHandler
+)
+
+// Func to implement contract of authHandler
+type AuthHandler struct{}
+
+// Contract of Auth Handler
+type AuthHandlerInterface interface {
+	AuthLogin(c *gin.Context)
+	AuthRegister(c *gin.Context)
+}
+
+// Func to return Auth Handler instance
+func GetAuthHandler() AuthHandlerInterface {
+	if authHandler == nil {
+		authHandler = &AuthHandler{}
+	}
+	return authHandler
+}
+
 // Func to handle Auth Login
-func AuthLoginHandler(c *gin.Context) {
+func (handler *AuthHandler) AuthLogin(c *gin.Context) {
 	var loginRequest validator.LoginRequest
 	err := c.ShouldBind(&loginRequest)
 
@@ -57,7 +79,7 @@ func AuthLoginHandler(c *gin.Context) {
 }
 
 // Func to handle Auth Register
-func AuthRegisterHandler(c *gin.Context) {
+func (handler *AuthHandler) AuthRegister(c *gin.Context) {
 	var registerRequest validator.RegisterRequest
 	err := c.ShouldBind(&registerRequest)
 
