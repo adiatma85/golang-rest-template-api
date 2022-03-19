@@ -4,9 +4,11 @@ server:
   #release | debug
   mode: "debug"
   name: "your application name"
+  # jwt expires at
+  ExpiresHour: 1
 
 database:
-  # mysql | sqllite3 | postgres
+  # mysql  | postgres
   driver: "mysql"
   dbname: "go-tutorial-gorm"
   username: "root"

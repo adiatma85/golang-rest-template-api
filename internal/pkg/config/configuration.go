@@ -30,10 +30,11 @@ type DatabaseConfiguration struct {
 
 // Struct of Server Configuration instance.
 type ServerConnection struct {
-	Port   string
-	Secret string
-	Mode   string
-	Name   string
+	Port        string
+	Secret      string
+	Mode        string
+	Name        string
+	ExpiresHour int64
 }
 
 // Setup the configuration

@@ -21,9 +21,9 @@ func AuthJWT() gin.HandlerFunc {
 
 		token := strings.Split(authHeader, " ")[1]
 		jwtHelper := crypto.GetJWTCrypto()
-		isValid := jwtHelper.ValidateToken(token)
+		isValid, err := jwtHelper.ValidateToken(token)
 		if !isValid {
-			response := response.BuildFailedResponse("token is not valid", nil)
+			response := response.BuildFailedResponse("token is not valid", err.Error())
 			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
 			return
 		}

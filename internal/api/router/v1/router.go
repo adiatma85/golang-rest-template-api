@@ -37,8 +37,8 @@ func Setup() *gin.Engine {
 	authGroup := v1Route.Group("auth")
 	authHandler := handler.GetAuthHandler()
 	{
-		authGroup.POST("login", authHandler.AuthRegister)
-		authGroup.POST("register", authHandler.AuthLogin)
+		authGroup.POST("login", authHandler.AuthLogin)
+		authGroup.POST("register", authHandler.AuthRegister)
 	}
 
 	// UserGroup with "user" prefix
