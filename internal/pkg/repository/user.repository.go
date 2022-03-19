@@ -60,7 +60,7 @@ func (repo *UserRepository) GetAll() (*[]models.User, error) {
 // Func to get Query of WHERE with pagination
 func (repo *UserRepository) Query(q *models.User, pagination helpers.Pagination) (*helpers.Pagination, error) {
 	var users []models.User
-	outputPagination, _ := Query(q, &users, pagination, []string{})
+	outputPagination, _ := Query(q, &users, pagination, []string{"Product"})
 	return outputPagination, nil
 }
 

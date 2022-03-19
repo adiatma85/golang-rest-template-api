@@ -60,11 +60,12 @@ func Find(where interface{}, output interface{}, associations []string, orders .
 // Common function to paginate by model in db
 func Query(where interface{}, output interface{}, pagination helpers.Pagination, associations []string) (*helpers.Pagination, error) {
 	db := db.GetDB()
+	db.Scopes(paginate(where, &pagination, db))
 	// preload the associations
 	for _, a := range associations {
 		db = db.Preload(a)
 	}
-	db.Scopes(paginate(where, &pagination, db)).Find(output)
+	db.Find(output)
 	pagination.Rows = output
 	return &pagination, nil
 }
