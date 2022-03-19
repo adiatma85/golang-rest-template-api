@@ -53,7 +53,7 @@ func (repo *UserRepository) Create(user models.User) (models.User, error) {
 // Func to get All User without Pagination
 func (repo *UserRepository) GetAll() (*[]models.User, error) {
 	var users []models.User
-	err := Find(&models.User{}, &users, []string{}, "id asc")
+	err := Find(&models.User{}, &users, []string{"Product"}, "id asc")
 	return &users, err
 }
 
@@ -69,7 +69,7 @@ func (repo *UserRepository) GetByEmail(email string) (*models.User, error) {
 	var user models.User
 	where := models.User{}
 	where.Email = email
-	_, err := First(&where, &user, []string{})
+	_, err := First(&where, &user, []string{"Product"})
 	if err != nil {
 		return nil, err
 	}
@@ -81,7 +81,7 @@ func (repo *UserRepository) GetById(userId string) (*models.User, error) {
 	var user models.User
 	where := models.User{}
 	where.ID, _ = strconv.ParseUint(userId, 10, 64)
-	_, err := First(&where, &user, []string{})
+	_, err := First(&where, &user, []string{"Product"})
 	if err != nil {
 		return nil, err
 	}

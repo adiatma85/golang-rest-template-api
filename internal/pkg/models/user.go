@@ -9,10 +9,10 @@ import (
 // Struct for User Models
 type User struct {
 	Model
-	Name     string `gorm:"type:varchar(100)" json:"name" validation:"name"`
-	Email    string `gorm:"type:varchar(100);unique;" json:"email" validation:"email"`
-	Password string `gorm:"type:varchar(100)" json:"-" validation:"password"`
-	// Role     UserRole `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Name     string    `gorm:"type:varchar(100)" json:"name" validation:"name"`
+	Email    string    `gorm:"type:varchar(100);unique;" json:"email" validation:"email"`
+	Password string    `gorm:"type:varchar(100)" json:"-" validation:"password"`
+	Product  []Product `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 // Renew Created_at and Updated_at before creating

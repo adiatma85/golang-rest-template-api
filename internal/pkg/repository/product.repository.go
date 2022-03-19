@@ -53,7 +53,7 @@ func (repo *ProductRepository) Create(product models.Product) (models.Product, e
 // Func to get All User without Pagination
 func (repo *ProductRepository) GetAll() (*[]models.Product, error) {
 	var users []models.Product
-	err := Find(&models.Product{}, &users, []string{}, "id asc")
+	err := Find(&models.Product{}, &users, []string{"User"}, "id asc")
 	return &users, err
 }
 
@@ -68,7 +68,7 @@ func (repo *ProductRepository) Query(q *models.Product, pagination helpers.Pagin
 func (repo *ProductRepository) GetByEmail(email string) (*models.Product, error) {
 	var user models.Product
 	where := models.Product{}
-	_, err := First(&where, &user, []string{})
+	_, err := First(&where, &user, []string{"User"})
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +80,7 @@ func (repo *ProductRepository) GetById(userId string) (*models.Product, error) {
 	var user models.Product
 	where := models.Product{}
 	where.ID, _ = strconv.ParseUint(userId, 10, 64)
-	_, err := First(&where, &user, []string{})
+	_, err := First(&where, &user, []string{"User"})
 	if err != nil {
 		return nil, err
 	}
