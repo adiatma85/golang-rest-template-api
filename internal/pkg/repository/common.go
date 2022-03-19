@@ -4,8 +4,8 @@ import (
 	"errors"
 	"math"
 
-	"github.com/adiatma85/go-tutorial-gorm/internal/pkg/db"
-	"github.com/adiatma85/go-tutorial-gorm/pkg/helpers"
+	"github.com/adiatma85/golang-rest-template-api/internal/pkg/db"
+	"github.com/adiatma85/golang-rest-template-api/pkg/helpers"
 	"gorm.io/gorm"
 )
 

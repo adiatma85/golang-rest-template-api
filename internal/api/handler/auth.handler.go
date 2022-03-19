@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/adiatma85/go-tutorial-gorm/internal/pkg/models"
-	"github.com/adiatma85/go-tutorial-gorm/internal/pkg/repository"
-	"github.com/adiatma85/go-tutorial-gorm/internal/pkg/validator"
-	"github.com/adiatma85/go-tutorial-gorm/pkg/crypto"
-	"github.com/adiatma85/go-tutorial-gorm/pkg/response"
+	"github.com/adiatma85/golang-rest-template-api/internal/pkg/models"
+	"github.com/adiatma85/golang-rest-template-api/internal/pkg/repository"
+	"github.com/adiatma85/golang-rest-template-api/internal/pkg/validator"
+	"github.com/adiatma85/golang-rest-template-api/pkg/crypto"
+	"github.com/adiatma85/golang-rest-template-api/pkg/response"
 	"github.com/gin-gonic/gin"
 	"github.com/mashingan/smapping"
 )

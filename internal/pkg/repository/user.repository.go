@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/adiatma85/go-tutorial-gorm/internal/pkg/models"
-	"github.com/adiatma85/go-tutorial-gorm/pkg/crypto"
-	"github.com/adiatma85/go-tutorial-gorm/pkg/helpers"
+	"github.com/adiatma85/golang-rest-template-api/internal/pkg/models"
+	"github.com/adiatma85/golang-rest-template-api/pkg/crypto"
+	"github.com/adiatma85/golang-rest-template-api/pkg/helpers"
 )
 
 // Local variable

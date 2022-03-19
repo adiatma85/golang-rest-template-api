@@ -3,9 +3,9 @@ package api
 import (
 	"fmt"
 
-	v1 "github.com/adiatma85/go-tutorial-gorm/internal/api/router/v1"
-	"github.com/adiatma85/go-tutorial-gorm/internal/pkg/config"
-	"github.com/adiatma85/go-tutorial-gorm/internal/pkg/db"
+	v1 "github.com/adiatma85/golang-rest-template-api/internal/api/router/v1"
+	"github.com/adiatma85/golang-rest-template-api/internal/pkg/config"
+	"github.com/adiatma85/golang-rest-template-api/internal/pkg/db"
 	"github.com/gin-gonic/gin"
 )
 

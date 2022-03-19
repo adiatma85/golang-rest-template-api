@@ -1,4 +1,4 @@
-module github.com/adiatma85/go-tutorial-gorm
+module github.com/adiatma85/golang-rest-template-api
 
 go 1.17
 

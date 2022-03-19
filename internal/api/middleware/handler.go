@@ -3,7 +3,7 @@ package middleware
 import (
 	"net/http"
 
-	"github.com/adiatma85/go-tutorial-gorm/pkg/response"
+	"github.com/adiatma85/golang-rest-template-api/pkg/response"
 	"github.com/gin-gonic/gin"
 )
 

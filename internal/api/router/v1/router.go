@@ -3,8 +3,8 @@ package v1
 import (
 	"fmt"
 
-	"github.com/adiatma85/go-tutorial-gorm/internal/api/handler"
-	"github.com/adiatma85/go-tutorial-gorm/internal/api/middleware"
+	"github.com/adiatma85/golang-rest-template-api/internal/api/handler"
+	"github.com/adiatma85/golang-rest-template-api/internal/api/middleware"
 	"github.com/gin-gonic/gin"
 )
 

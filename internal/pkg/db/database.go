@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/adiatma85/go-tutorial-gorm/internal/pkg/config"
-	"github.com/adiatma85/go-tutorial-gorm/internal/pkg/models"
+	"github.com/adiatma85/golang-rest-template-api/internal/pkg/config"
+	"github.com/adiatma85/golang-rest-template-api/internal/pkg/models"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
