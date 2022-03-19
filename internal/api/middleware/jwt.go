@@ -13,13 +13,13 @@ import (
 func AuthJWT() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
-		token := strings.Split(authHeader, " ")[1]
-		if token == "" {
+		if authHeader == "" {
 			response := response.BuildFailedResponse("no token provided", nil)
 			c.AbortWithStatusJSON(http.StatusBadRequest, response)
 			return
 		}
 
+		token := strings.Split(authHeader, " ")[1]
 		jwtHelper := crypto.GetJWTCrypto()
 		isValid := jwtHelper.ValidateToken(token)
 		if !isValid {

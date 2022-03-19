@@ -47,7 +47,7 @@ func (handler *UserHandler) CreateUser(c *gin.Context) {
 
 	if err != nil {
 		response := response.BuildFailedResponse("failed to register new user", err.Error())
-		c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+		c.AbortWithStatusJSON(http.StatusBadRequest, response)
 		return
 	}
 
@@ -61,7 +61,7 @@ func (handler *UserHandler) CreateUser(c *gin.Context) {
 
 	if newUser, err := userRepo.Create(*userModel); err != nil {
 		response := response.BuildFailedResponse("failed to register", err.Error())
-		c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, response)
 		return
 	} else {
 		response := response.BuildSuccessResponse("success login", newUser)
@@ -139,7 +139,7 @@ func (handler *UserHandler) UpdateSpecificUser(c *gin.Context) {
 
 	if err != nil {
 		response := response.BuildFailedResponse("failed to update a user", err.Error())
-		c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+		c.AbortWithStatusJSON(http.StatusBadRequest, response)
 		return
 	}
 
@@ -154,7 +154,7 @@ func (handler *UserHandler) UpdateSpecificUser(c *gin.Context) {
 
 	if err != nil {
 		response := response.BuildFailedResponse("failed to update an user", err.Error())
-		c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, response)
 		return
 	}
 
@@ -171,7 +171,7 @@ func (handler *UserHandler) DeleteSpecificUser(c *gin.Context) {
 	err := userRepo.Delete(deleteModel)
 	if err != nil {
 		response := response.BuildFailedResponse("failed to delete an user", err.Error())
-		c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, response)
 		return
 	}
 	c.JSON(http.StatusNoContent, nil)
@@ -186,8 +186,12 @@ func (handler *UserHandler) DeleteUsersWithIds(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, response)
 		return
 	}
-	c.JSON(http.StatusOK, map[string]interface{}{
-		"success": "ok",
-		"message": "need revision for delete users",
-	})
+	userRepo := repository.GetUserRepository()
+	err = userRepo.DeleteWithIds(deleteRequest.Ids)
+	if err != nil {
+		response := response.BuildFailedResponse("failed to delete users", err.Error())
+		c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+		return
+	}
+	c.JSON(http.StatusNoContent, nil)
 }

@@ -26,6 +26,7 @@ type ProductRepositoryInterface interface {
 	GetById(productId string) (*models.Product, error)
 	Update(product *models.Product) error
 	Delete(product *models.Product) error
+	DeleteWithIds(ids []uint64) error
 }
 
 // Func to return Product Repository instance
@@ -94,6 +95,15 @@ func (repo *ProductRepository) Update(user *models.Product) error {
 // Delete User By Model defined in controller
 func (repo *ProductRepository) Delete(user *models.Product) error {
 	_, err = DeleteByModel(user)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// Delete User by multiple ids
+func (repo *ProductRepository) DeleteWithIds(ids []uint64) error {
+	_, err = DeleteByIDS(models.Product{}, ids)
 	if err != nil {
 		return err
 	}

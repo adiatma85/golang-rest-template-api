@@ -9,5 +9,5 @@ type UpdateUserRequest struct {
 
 // Struct that define the validator/binding of Delete Users by JSON Request
 type DeleteUsersRequest struct {
-	Ids []int `json:"ids" form:"ids"`
+	Ids []uint64 `json:"ids" form:"ids" binding:"required"`
 }

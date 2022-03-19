@@ -12,3 +12,8 @@ type UpdateProductRequest struct {
 	Name  string `json:"name" form:"name" binding:"required,min=1"`
 	Price uint64 `json:"price" form:"email" binding:"required"`
 }
+
+// Struct that define the validator/binding of Delete Products by JSON Request
+type DeleteProductsRequest struct {
+	Ids []uint64 `json:"ids" form:"ids" binding:"required"`
+}

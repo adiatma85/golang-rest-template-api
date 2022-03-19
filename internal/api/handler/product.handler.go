@@ -46,7 +46,7 @@ func (handler *ProductHandler) CreateProduct(c *gin.Context) {
 
 	if err != nil {
 		response := response.BuildFailedResponse("failed to create new product", err.Error())
-		c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+		c.AbortWithStatusJSON(http.StatusBadRequest, response)
 		return
 	}
 
@@ -58,7 +58,7 @@ func (handler *ProductHandler) CreateProduct(c *gin.Context) {
 
 	if newProduct, err := productRepo.Create(*productModel); err != nil {
 		response := response.BuildFailedResponse("failed to create new product", err.Error())
-		c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, response)
 		return
 	} else {
 		response := response.BuildSuccessResponse("success to create new product", newProduct)
@@ -136,7 +136,7 @@ func (handler *ProductHandler) UpdateSpecificProduct(c *gin.Context) {
 
 	if err != nil {
 		response := response.BuildFailedResponse("failed to update a product", err.Error())
-		c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+		c.AbortWithStatusJSON(http.StatusBadRequest, response)
 		return
 	}
 
@@ -151,7 +151,7 @@ func (handler *ProductHandler) UpdateSpecificProduct(c *gin.Context) {
 
 	if err != nil {
 		response := response.BuildFailedResponse("failed to update a product", err.Error())
-		c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, response)
 		return
 	}
 
@@ -168,7 +168,7 @@ func (handler *ProductHandler) DeleteSpecificProduct(c *gin.Context) {
 	err := productRepo.Delete(deleteModel)
 	if err != nil {
 		response := response.BuildFailedResponse("failed to delete a product", err.Error())
-		c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, response)
 		return
 	}
 	c.JSON(http.StatusNoContent, nil)
@@ -176,8 +176,19 @@ func (handler *ProductHandler) DeleteSpecificProduct(c *gin.Context) {
 
 // Func to Delete Products with array ids
 func (handler *ProductHandler) DeleteProductsWithIds(c *gin.Context) {
-	c.JSON(http.StatusOK, map[string]interface{}{
-		"success": "ok",
-		"message": "need revision for delete product",
-	})
+	var deleteRequest validator.DeleteProductsRequest
+	err := c.ShouldBind(&deleteRequest)
+	if err != nil {
+		response := response.BuildFailedResponse("failed to delete products", err.Error())
+		c.AbortWithStatusJSON(http.StatusBadRequest, response)
+		return
+	}
+	userRepo := repository.GetUserRepository()
+	err = userRepo.DeleteWithIds(deleteRequest.Ids)
+	if err != nil {
+		response := response.BuildFailedResponse("failed to delete products", err.Error())
+		c.AbortWithStatusJSON(http.StatusInternalServerError, response)
+		return
+	}
+	c.JSON(http.StatusNoContent, nil)
 }
