@@ -5,7 +5,6 @@ import (
 
 	"github.com/adiatma85/golang-rest-template-api/internal/pkg/models"
 	"github.com/adiatma85/golang-rest-template-api/pkg/helpers"
-	"gorm.io/gorm"
 )
 
 // NEED TO FINALIZE PRODUCT REPOSITORY
@@ -16,14 +15,7 @@ var (
 )
 
 // Struct to implements contract or interface
-type ProductRepository struct {
-	db *gorm.DB
-}
-
-// Func to initialize Product repository
-func (repo *ProductRepository) NewProductRepository(db *gorm.DB) {
-	repo.db = db
-}
+type ProductRepository struct{}
 
 // Contract of Product Repository
 type ProductRepositoryInterface interface {
