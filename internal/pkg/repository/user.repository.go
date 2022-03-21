@@ -7,6 +7,7 @@ import (
 	"github.com/adiatma85/golang-rest-template-api/internal/pkg/models"
 	"github.com/adiatma85/golang-rest-template-api/pkg/crypto"
 	"github.com/adiatma85/golang-rest-template-api/pkg/helpers"
+	"gorm.io/gorm"
 )
 
 // Local variable
@@ -27,7 +28,14 @@ type UserRepositoryInterface interface {
 }
 
 // Struct to implements contract or interface
-type UserRepository struct{}
+type UserRepository struct {
+	db *gorm.DB
+}
+
+// Func to initialize User repository
+func (repo *UserRepository) NewUserRepository(db *gorm.DB) {
+	repo.db = db
+}
 
 // Func to return User Repository instance
 func GetUserRepository() UserRepositoryInterface {

@@ -10,7 +10,15 @@ import (
 )
 
 // Common variable
-var err error
+var (
+	err      error
+	database *gorm.DB
+)
+
+// Func to change database direction
+func InitializeDb(db *gorm.DB) {
+	database = db
+}
 
 // Common function to create in db
 func Create(value interface{}) error {

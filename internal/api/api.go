@@ -17,6 +17,11 @@ func setConfiguration(configPath string) {
 
 }
 
+// Initialize repository
+// func initializeRepository() {
+
+// }
+
 // Run the new API with designated configuration
 func Run(configPath string) {
 	if configPath == "" {
