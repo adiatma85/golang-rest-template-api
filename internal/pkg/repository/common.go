@@ -4,35 +4,30 @@ import (
 	"errors"
 	"math"
 
+	"github.com/adiatma85/golang-rest-template-api/internal/pkg/db"
 	"github.com/adiatma85/golang-rest-template-api/pkg/helpers"
 	"gorm.io/gorm"
 )
 
 // Common variable
 var (
-	err      error
-	database *gorm.DB
+	err error
 )
-
-// Func to change database direction
-func InitializeDb(db *gorm.DB) {
-	database = db
-}
 
 // Common function to create in db
 func Create(value interface{}) error {
-	return database.Create(value).Error
+	return db.GetDB().Create(value).Error
 }
 
 // Common function to save in db
 func Save(value interface{}) error {
-	return database.Updates(value).Error
+	return db.GetDB().Updates(value).Error
 }
 
 // Common function to get the first row
 // Associations mean its relation to other
 func First(where interface{}, out interface{}, associations []string) (notFound bool, err error) {
-	db := database
+	db := db.GetDB()
 	for _, a := range associations {
 		db = db.Preload(a)
 	}
@@ -45,12 +40,12 @@ func First(where interface{}, out interface{}, associations []string) (notFound 
 
 // Common function to update in db
 func Update(where, value interface{}) error {
-	return database.Model(where).Updates(value).Error
+	return db.GetDB().Model(where).Updates(value).Error
 }
 
 // Common function to find in db
 func Find(where interface{}, output interface{}, associations []string, orders ...string) error {
-	db := database
+	db := db.GetDB()
 	for _, a := range associations {
 		db = db.Preload(a)
 	}
@@ -65,7 +60,7 @@ func Find(where interface{}, output interface{}, associations []string, orders .
 
 // Common function to paginate by model in db
 func Query(where interface{}, output interface{}, pagination helpers.Pagination, associations []string) (*helpers.Pagination, error) {
-	db := database
+	db := db.GetDB()
 	db.Scopes(paginate(where, &pagination, db))
 	// preload the associations
 	for _, a := range associations {
@@ -92,7 +87,7 @@ func paginate(value interface{}, pagination *helpers.Pagination, db *gorm.DB) fu
 
 // Common function to delete by model in db
 func DeleteByModel(model interface{}) (count int64, err error) {
-	db := database.Delete(model)
+	db := db.GetDB().Delete(model)
 	err = db.Error
 	if err != nil {
 		return
@@ -103,7 +98,7 @@ func DeleteByModel(model interface{}) (count int64, err error) {
 
 // Common function to delete by where in db
 func DeleteByWhere(model, where interface{}) (count int64, err error) {
-	db := database.Where(where).Delete(model)
+	db := db.GetDB().Where(where).Delete(model)
 	err = db.Error
 	if err != nil {
 		return
@@ -114,7 +109,7 @@ func DeleteByWhere(model, where interface{}) (count int64, err error) {
 
 // Common function to delete by id in db
 func DeleteByID(model interface{}, id uint64) (count int64, err error) {
-	db := database.Where("id=?", id).Delete(model)
+	db := db.GetDB().Where("id=?", id).Delete(model)
 	err = db.Error
 	if err != nil {
 		return
@@ -125,7 +120,7 @@ func DeleteByID(model interface{}, id uint64) (count int64, err error) {
 
 // Common function to delete by ids (multiple) in db
 func DeleteByIDS(model interface{}, ids []uint64) (count int64, err error) {
-	db := database.Where("id in (?)", ids).Delete(model)
+	db := db.GetDB().Where("id in (?)", ids).Delete(model)
 	err = db.Error
 	if err != nil {
 		return

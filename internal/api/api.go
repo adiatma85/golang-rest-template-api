@@ -6,7 +6,6 @@ import (
 	v1 "github.com/adiatma85/golang-rest-template-api/internal/api/router/v1"
 	"github.com/adiatma85/golang-rest-template-api/internal/pkg/config"
 	"github.com/adiatma85/golang-rest-template-api/internal/pkg/db"
-	"github.com/adiatma85/golang-rest-template-api/internal/pkg/repository"
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,11 +17,6 @@ func setConfiguration(configPath string) {
 
 }
 
-// Initialize repository
-func initializeDbRepository() {
-	repository.InitializeDb(db.GetDB())
-}
-
 // Run the new API with designated configuration
 func Run(configPath string) {
 	if configPath == "" {
@@ -30,7 +24,6 @@ func Run(configPath string) {
 	}
 	setConfiguration(configPath)
 	conf := config.GetConfig()
-	initializeDbRepository()
 
 	// Routing
 	web := v1.Setup()
