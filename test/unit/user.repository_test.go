@@ -16,16 +16,18 @@ type UserRepositorySuite struct {
 	userRepo repository.UserRepositoryInterface
 }
 
-// Func Setup for Suite
+// Function to initialize the test suite
 func (suite *UserRepositorySuite) SetupSuite() {
-	// Function to initialize the test suite
 	// Initialize configuration
 	db.SetupTestingDb(test.Host, test.Username, test.Password, test.Port, test.Database)
 	suite.userRepo = repository.GetUserRepository()
 }
 
+// Func to teardown after testing
 func (suite *UserRepositorySuite) TearDownTest() {
-	// fmt.Println("testing is finished")
+	for _, model := range test.Models {
+		db.GetDB().Migrator().DropTable(model)
+	}
 }
 
 func (suite *UserRepositorySuite) TestCreateUser_Positive() {
