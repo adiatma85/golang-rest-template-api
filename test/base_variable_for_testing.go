@@ -8,6 +8,7 @@ import (
 var (
 
 	// Database configuration
+	// Change configuration in here
 	Database = "go-unit-integration"
 	Username = "root"
 	Password = "root"

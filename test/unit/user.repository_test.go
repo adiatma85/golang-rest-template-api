@@ -30,6 +30,7 @@ func (suite *UserRepositorySuite) TearDownTest() {
 	}
 }
 
+// Create User Test Repository
 func (suite *UserRepositorySuite) TestCreateUser_Positive() {
 	user := models.User{
 		Name:     "Ramdani Koernia",
@@ -39,6 +40,21 @@ func (suite *UserRepositorySuite) TestCreateUser_Positive() {
 
 	_, err := suite.userRepo.Create(user)
 	suite.NoError(err, "no error when creating new user")
+}
+
+// Get All User Test Repository
+func (suite *UserRepositorySuite) TestGetAllUser_Positive() {
+
+}
+
+// Update One User Test Repository
+func (suite *UserRepositorySuite) UpdateAUser_Positive() {
+
+}
+
+// Delete A User Test Repository
+func (suite *UserRepositorySuite) DeleteAUser_Positive() {
+
 }
 
 func TestUserRepository(t *testing.T) {
