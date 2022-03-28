@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"fmt"
 	"strconv"
 
 	"github.com/adiatma85/golang-rest-template-api/internal/pkg/models"
@@ -18,7 +17,7 @@ var (
 type UserRepositoryInterface interface {
 	Create(user models.User) (models.User, error)
 	GetAll() (*[]models.User, error)
-	Query(q *models.User, pagination helpers.Pagination) (*helpers.Pagination, error)
+	Query(pagination helpers.Pagination) (*helpers.Pagination, error)
 	GetByEmail(email string) (*models.User, error)
 	GetById(userId string) (*models.User, error)
 	Update(user *models.User) error
@@ -57,8 +56,15 @@ func (repo *UserRepository) GetAll() (*[]models.User, error) {
 	return &users, err
 }
 
-// Func to get Query of WHERE with pagination
-func (repo *UserRepository) Query(q *models.User, pagination helpers.Pagination) (*helpers.Pagination, error) {
+// Func to get Query of WHERE with pagination but
+func (repo *UserRepository) Query(pagination helpers.Pagination) (*helpers.Pagination, error) {
+	var users []models.User
+	outputPagination, _ := Query(&models.User{}, &users, pagination, []string{"Product"})
+	return outputPagination, nil
+}
+
+// Query with existed body from client
+func (repo *UserRepository) QueryWithBody(q *models.User, pagination helpers.Pagination) (*helpers.Pagination, error) {
 	var users []models.User
 	outputPagination, _ := Query(q, &users, pagination, []string{"Product"})
 	return outputPagination, nil
@@ -93,13 +99,6 @@ func (repo *UserRepository) Update(user *models.User) error {
 	if user.Password != "" {
 		passwordHelper := crypto.GetPasswordCryptoHelper()
 		user.Password, err = passwordHelper.HashAndSalt([]byte(user.Password))
-		if err != nil {
-			return err
-		}
-	} else {
-		var tempUser *models.User
-		tempUser, err = repo.GetById(fmt.Sprint(user.ID))
-		user.Password = tempUser.Password
 		if err != nil {
 			return err
 		}
