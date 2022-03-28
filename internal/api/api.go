@@ -24,6 +24,8 @@ func Run(configPath string) {
 	}
 	setConfiguration(configPath)
 	conf := config.GetConfig()
+
+	// Routing
 	web := v1.Setup()
 	fmt.Println("Go API REST Running on port " + conf.Server.Port)
 	fmt.Println("==================>")

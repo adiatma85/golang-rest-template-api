@@ -93,7 +93,7 @@ func (handler *UserHandler) GetSpecificUser(c *gin.Context) {
 
 	if err != nil {
 		response := response.BuildFailedResponse("failed to fetch data", err.Error())
-		c.AbortWithStatusJSON(http.StatusInternalServerError, response)
+		c.AbortWithStatusJSON(http.StatusNotFound, response)
 		return
 	}
 
@@ -120,7 +120,7 @@ func (handler *UserHandler) QueryUsers(c *gin.Context) {
 		pagination.Limit = 10
 	}
 
-	users, err := userRepo.Query(&models.User{}, pagination)
+	users, err := userRepo.Query(pagination)
 
 	if err != nil {
 		response := response.BuildFailedResponse("failed to fetch data", err.Error())
@@ -143,14 +143,20 @@ func (handler *UserHandler) UpdateSpecificUser(c *gin.Context) {
 		return
 	}
 
-	updateModel := &models.User{}
+	userRepo := repository.GetUserRepository()
 
 	// smapping the update request to models
-	updateModel.ID, _ = strconv.ParseUint(c.Param("userId"), 10, 64)
-	smapping.FillStruct(updateModel, smapping.MapFields(&updateRequest))
+	existedUser, err := userRepo.GetById(c.Param("userId"))
 
-	userRepo := repository.GetUserRepository()
-	err = userRepo.Update(updateModel)
+	// If user is not exist
+	if err != nil {
+		response := response.BuildFailedResponse("no such user exist", err.Error())
+		c.AbortWithStatusJSON(http.StatusNotFound, response)
+		return
+	}
+	smapping.FillStruct(existedUser, smapping.MapFields(&updateRequest))
+
+	err = userRepo.Update(existedUser)
 
 	if err != nil {
 		response := response.BuildFailedResponse("failed to update an user", err.Error())
@@ -163,12 +169,16 @@ func (handler *UserHandler) UpdateSpecificUser(c *gin.Context) {
 
 // Func to Delete Specific User
 func (handler *UserHandler) DeleteSpecificUser(c *gin.Context) {
-	deleteModel := &models.User{}
-	deleteModel.ID, _ = strconv.ParseUint(c.Param("userId"), 10, 64)
-
 	userRepo := repository.GetUserRepository()
+	existedUser, err := userRepo.GetById(c.Param("userId"))
 
-	err := userRepo.Delete(deleteModel)
+	if err != nil {
+		response := response.BuildFailedResponse("no such user exist", err.Error())
+		c.AbortWithStatusJSON(http.StatusNotFound, response)
+		return
+	}
+
+	err = userRepo.Delete(existedUser)
 	if err != nil {
 		response := response.BuildFailedResponse("failed to delete an user", err.Error())
 		c.AbortWithStatusJSON(http.StatusInternalServerError, response)
@@ -183,14 +193,14 @@ func (handler *UserHandler) DeleteUsersWithIds(c *gin.Context) {
 	err := c.ShouldBind(&deleteRequest)
 	if err != nil {
 		response := response.BuildFailedResponse("failed to delete users", err.Error())
-		c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+		c.AbortWithStatusJSON(http.StatusBadRequest, response)
 		return
 	}
 	userRepo := repository.GetUserRepository()
 	err = userRepo.DeleteWithIds(deleteRequest.Ids)
 	if err != nil {
 		response := response.BuildFailedResponse("failed to delete users", err.Error())
-		c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, response)
 		return
 	}
 	c.JSON(http.StatusNoContent, nil)
