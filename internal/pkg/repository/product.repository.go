@@ -21,7 +21,8 @@ type ProductRepository struct{}
 type ProductRepositoryInterface interface {
 	Create(product models.Product) (models.Product, error)
 	GetAll() (*[]models.Product, error)
-	Query(q *models.Product, pagination helpers.Pagination) (*helpers.Pagination, error)
+	Query(pagination helpers.Pagination) (*helpers.Pagination, error)
+	QueryWithCondition(q *models.Product, pagination helpers.Pagination) (*helpers.Pagination, error)
 	GetByEmail(email string) (*models.Product, error)
 	GetById(productId string) (*models.Product, error)
 	Update(product *models.Product) error
@@ -58,7 +59,14 @@ func (repo *ProductRepository) GetAll() (*[]models.Product, error) {
 }
 
 // Func to get Query of WHERE with Pagination
-func (repo *ProductRepository) Query(q *models.Product, pagination helpers.Pagination) (*helpers.Pagination, error) {
+func (repo *ProductRepository) Query(pagination helpers.Pagination) (*helpers.Pagination, error) {
+	var products []models.Product
+	outputPagination, _ := Query(&models.Product{}, &products, pagination, []string{"User"})
+	return outputPagination, nil
+}
+
+// Query with existed body from client
+func (repo *ProductRepository) QueryWithCondition(q *models.Product, pagination helpers.Pagination) (*helpers.Pagination, error) {
 	var products []models.Product
 	outputPagination, _ := Query(q, &products, pagination, []string{"User"})
 	return outputPagination, nil

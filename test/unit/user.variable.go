@@ -19,3 +19,12 @@ var users []models.User = []models.User{
 		Email:    "random_password@example.com",
 	},
 }
+
+// user that will be inserted in testing
+var willBeUser models.User = models.User{
+	Model:    models.Model{},
+	Name:     "Korenia",
+	Email:    "korenia@example.com",
+	Password: "Password",
+	Product:  []models.Product{},
+}
