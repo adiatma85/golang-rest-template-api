@@ -1,6 +1,7 @@
 package unit
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/adiatma85/golang-rest-template-api/internal/pkg/db"
@@ -12,10 +13,20 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
+// Struct for User Repository Suite
 type UserRepositorySuite struct {
 	// We need this to use the suite functionalities from testify
 	suite.Suite
 	userRepo repository.UserRepositoryInterface
+}
+
+// Main Function for Test Suite
+func TestUserRepository(t *testing.T) {
+	suite.Run(t, new(UserRepositorySuite))
+	// Clean up after all testing
+	for _, model := range test.Models {
+		db.GetDB().Migrator().DropTable(model)
+	}
 }
 
 // Function to initialize the test suite
@@ -30,40 +41,32 @@ func (suite *UserRepositorySuite) SetupSuite() {
 	}
 }
 
-// Create User Test Repository
+// Create User instance Test
 func (suite *UserRepositorySuite) TestCreateUser_Positive() {
-	userPassword := "Password"
-	passwordHelper := crypto.GetPasswordCryptoHelper()
-	hashedPassword, _ := passwordHelper.HashAndSalt([]byte(userPassword))
 
-	// Models from handler should like this
-	user := models.User{
-		Name:     "Korenia",
-		Password: hashedPassword,
-		Email:    "korenia@example.com",
-	}
-
-	createdUser, err := suite.userRepo.Create(user)
+	// Creating user
+	createdUser, err := suite.userRepo.Create(willBeUser)
 
 	// Equal assertion
-	suite.Equal(user.Name, createdUser.Name)
-	suite.Equal(user.Email, createdUser.Email)
-	suite.Equal(user.Password, createdUser.Password)
-	suite.NoError(err, "no error when creating new user")
+	suite.Equal(willBeUser.Name, createdUser.Name, "user name should same")
+	suite.Equal(willBeUser.Email, createdUser.Email, "user email should same")
+	suite.Equal(willBeUser.Password, createdUser.Password, "user password should same")
+	suite.NoError(err, "should have no error when creating new user with this parameter")
 }
 
-// // Get All User Test Repository
+// Get All User instances Test
 func (suite *UserRepositorySuite) TestGetAllUser_Positive() {
 	_, err := suite.userRepo.GetAll()
-	suite.NoError(err, "no error when fetching all user")
+	suite.NoError(err, "should have no error when fetching users (bulk fetch)")
 }
 
-// // Test Query User with default pagination
+// Test Query User with default pagination
 func (suite *UserRepositorySuite) TestQueryUsersWithDefaultPagination() {
 	pagination, err := suite.userRepo.Query(helpers.Pagination{})
-	suite.Equal(pagination.GetLimit(), 10)
-	suite.Equal(pagination.GetPage(), 1)
-	suite.NoError(err, "no error when pagination users")
+	// pagination dilengkapi
+	suite.Equal(10, pagination.GetLimit(), "pagination limit should have value of 10")
+	suite.Equal(1, pagination.GetPage(), "pagination page should have value of 1")
+	suite.NoError(err, "should have no error when fetching users (pagination fetch)")
 }
 
 // Test Query User with pre-defined pagination
@@ -73,29 +76,33 @@ func (suite *UserRepositorySuite) TestQueryUsersWithPreDefinedPagination() {
 		Page:  1,
 	}
 	pagination, err := suite.userRepo.Query(definedPagination)
-	suite.Equal(pagination.Limit, 5)
-	suite.Equal(pagination.Page, 1)
-	suite.NoError(err, "no error when pagination users")
+	// pagination dilengkapi
+	suite.Equal(definedPagination.GetLimit(), pagination.GetLimit(), fmt.Sprintf("pagination limit should have value %d", definedPagination.GetLimit()))
+	suite.Equal(definedPagination.GetPage(), pagination.GetPage(), fmt.Sprintf("pagination page should have value %d", definedPagination.GetPage()))
+	suite.NoError(err, "should have no error when fetching users (pagination fetch)")
 }
 
 // Test get user from id
 func (suite *UserRepositorySuite) TestGetByIdPositive() {
-	_, err := suite.userRepo.GetById("1")
-	suite.NoError(err, "no error when fetching specific user")
+	user, err := suite.userRepo.GetById("1")
+	suite.Equal(uint64(1), user.ID, "both of the name from client data and existed user should have the same value")
+	suite.Equal(users[0].Name, user.Name, "both of the name from dummy data and existed user should have the same value")
+	suite.Equal(users[0].Email, user.Email, "both of the email from dummy data and existed user should have the same value")
+	suite.NoError(err, "should have no error when fetching user (singular fetch by id)")
 }
 
 // Test get user from their email
 func (suite *UserRepositorySuite) TestGetByEmailPositive() {
-	searchedEmail := "korenia@example.com"
-	existedUser, err := suite.userRepo.GetByEmail(searchedEmail)
-	suite.Equal(searchedEmail, existedUser.Email, "the email should same")
-	suite.NoError(err, "error happen when fetch single user by email")
+	existedUser, err := suite.userRepo.GetByEmail(willBeUser.Email)
+	suite.Equal(willBeUser.Name, existedUser.Name, "both of the name from dummy data and existed user should have the same value")
+	suite.Equal(willBeUser.Email, existedUser.Email, "both of the email from client and existed user should have the same value")
+	suite.NoError(err, "should have no error when fetching user (singular fetch by id)")
 }
 
 // Test get User from id but non exist
 func (suite *UserRepositorySuite) TestGetByIdNegative() {
 	_, err := suite.userRepo.GetById("1000")
-	suite.Error(err, "should have been error when search non-existent resources")
+	suite.Error(err, "should have an error when fetching user (singular fetch by id)")
 	suite.Equal(err.Error(), "record not found")
 }
 
@@ -116,9 +123,9 @@ func (suite *UserRepositorySuite) TestUpdateAUser_Positive() {
 
 	// Equal assertion to make sure that updated attribute is updated
 	updatedUser, _ := suite.userRepo.GetById("1")
-	suite.Equal(updateUser.Name, updatedUser.Name)
-
-	suite.NoError(err, "no error when updating particular user")
+	suite.Equal(updateUser.ID, updatedUser.ID, "both of the 'id' user from client and existed user should have the same value")
+	suite.Equal(updateUser.Name, updatedUser.Name, "both of the 'name' user from client and existed user should have the same value")
+	suite.NoError(err, "should have no error when updating user (without change the password)")
 }
 
 // Update One User Test Repository with Password change
@@ -138,8 +145,9 @@ func (suite *UserRepositorySuite) TestUpdateAUserwithPassword_Positive() {
 	updatedUser, _ := suite.userRepo.GetById("1")
 	passwordHelper := crypto.GetPasswordCryptoHelper()
 	condition := passwordHelper.ComparePassword(updatedUser.Password, []byte("changing password"))
-	suite.True(condition, "updated password is match")
-	suite.NoError(err, "no error when updating particular user")
+	suite.Equal(updateUser.ID, updatedUser.ID, "both of the 'id' user from client and existed user should have the same value")
+	suite.True(condition, "should return true when between hashed Password and plain password")
+	suite.NoError(err, "should have no error when updating user (without change the password)")
 }
 
 // Delete A User Test Repository
@@ -150,13 +158,5 @@ func (suite *UserRepositorySuite) TestDeleteAUser_Positive() {
 		},
 	}
 	err := suite.userRepo.Delete(&user)
-	suite.NoError(err, "no error when deleting")
-}
-
-func TestUserRepository(t *testing.T) {
-	suite.Run(t, new(UserRepositorySuite))
-	// Clean up after all testing
-	for _, model := range test.Models {
-		db.GetDB().Migrator().DropTable(model)
-	}
+	suite.NoError(err, "should have no error when deleting user (singular delete by id)")
 }
