@@ -18,6 +18,7 @@ type UserRepositoryInterface interface {
 	Create(user models.User) (models.User, error)
 	GetAll() (*[]models.User, error)
 	Query(pagination helpers.Pagination) (*helpers.Pagination, error)
+	QueryWithBody(q *models.User, pagination helpers.Pagination) (*helpers.Pagination, error)
 	GetByEmail(email string) (*models.User, error)
 	GetById(userId string) (*models.User, error)
 	Update(user *models.User) error

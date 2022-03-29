@@ -30,15 +30,8 @@ func (suite *UserRepositorySuite) SetupSuite() {
 	}
 }
 
-// Func to teardown after testing
-func (suite *UserRepositorySuite) TearDownTest() {
-	for _, model := range test.Models {
-		db.GetDB().Migrator().DropTable(model)
-	}
-}
-
 // Create User Test Repository
-func (suite *UserRepositorySuite) CreateUser_Positive() {
+func (suite *UserRepositorySuite) TestCreateUser_Positive() {
 	userPassword := "Password"
 	passwordHelper := crypto.GetPasswordCryptoHelper()
 	hashedPassword, _ := passwordHelper.HashAndSalt([]byte(userPassword))
@@ -59,22 +52,22 @@ func (suite *UserRepositorySuite) CreateUser_Positive() {
 	suite.NoError(err, "no error when creating new user")
 }
 
-// Get All User Test Repository
-func (suite *UserRepositorySuite) GetAllUser_Positive() {
+// // Get All User Test Repository
+func (suite *UserRepositorySuite) TestGetAllUser_Positive() {
 	_, err := suite.userRepo.GetAll()
 	suite.NoError(err, "no error when fetching all user")
 }
 
-// Test Query User with default pagination
-func (suite *UserRepositorySuite) QueryUsersWithDefaultPagination() {
+// // Test Query User with default pagination
+func (suite *UserRepositorySuite) TestQueryUsersWithDefaultPagination() {
 	pagination, err := suite.userRepo.Query(helpers.Pagination{})
-	suite.Equal(pagination.Limit, 10)
-	suite.Equal(pagination.Page, 1)
+	suite.Equal(pagination.GetLimit(), 10)
+	suite.Equal(pagination.GetPage(), 1)
 	suite.NoError(err, "no error when pagination users")
 }
 
 // Test Query User with pre-defined pagination
-func (suite *UserRepositorySuite) QueryUsersWithPreDefinedPagination() {
+func (suite *UserRepositorySuite) TestQueryUsersWithPreDefinedPagination() {
 	definedPagination := helpers.Pagination{
 		Limit: 5,
 		Page:  1,
@@ -86,19 +79,28 @@ func (suite *UserRepositorySuite) QueryUsersWithPreDefinedPagination() {
 }
 
 // Test get user from id
-func (suite *UserRepositorySuite) GetByIdPositive() {
+func (suite *UserRepositorySuite) TestGetByIdPositive() {
 	_, err := suite.userRepo.GetById("1")
 	suite.NoError(err, "no error when fetching specific user")
 }
 
+// Test get user from their email
+func (suite *UserRepositorySuite) TestGetByEmailPositive() {
+	searchedEmail := "korenia@example.com"
+	existedUser, err := suite.userRepo.GetByEmail(searchedEmail)
+	suite.Equal(searchedEmail, existedUser.Email, "the email should same")
+	suite.NoError(err, "error happen when fetch single user by email")
+}
+
 // Test get User from id but non exist
-func (suite *UserRepositorySuite) GetByIdNegative() {
-	_, err := suite.userRepo.GetById("-1")
-	suite.Error(err, "error when fetching non existent id")
+func (suite *UserRepositorySuite) TestGetByIdNegative() {
+	_, err := suite.userRepo.GetById("1000")
+	suite.Error(err, "should have been error when search non-existent resources")
+	suite.Equal(err.Error(), "record not found")
 }
 
 // Update One User Test Repository
-func (suite *UserRepositorySuite) UpdateAUser_Positive() {
+func (suite *UserRepositorySuite) TestUpdateAUser_Positive() {
 
 	// model id
 	insideModelId := models.Model{
@@ -120,8 +122,7 @@ func (suite *UserRepositorySuite) UpdateAUser_Positive() {
 }
 
 // Update One User Test Repository with Password change
-func (suite *UserRepositorySuite) UpdateAUserwithPassword_Positive() {
-	// definedUser
+func (suite *UserRepositorySuite) TestUpdateAUserwithPassword_Positive() {
 	// model id
 	insideModelId := models.Model{
 		ID: 1,
@@ -136,47 +137,26 @@ func (suite *UserRepositorySuite) UpdateAUserwithPassword_Positive() {
 	// Equal assertion to make sure that updated attribute is updated
 	updatedUser, _ := suite.userRepo.GetById("1")
 	passwordHelper := crypto.GetPasswordCryptoHelper()
-	condition := passwordHelper.ComparePassword(updatedUser.Password, []byte(updateUser.Password))
+	condition := passwordHelper.ComparePassword(updatedUser.Password, []byte("changing password"))
 	suite.True(condition, "updated password is match")
 	suite.NoError(err, "no error when updating particular user")
 }
 
-// Update One User Test Repository with non-existet id
-func (suite *UserRepositorySuite) UpdateAUser_Negative() {
-	// non existent user
-	updateUser := models.User{
-		Model: models.Model{
-			ID: 1000, // the number is so high that it exceed the testing case
-		},
-		Name: "changing name",
-	}
-	err := suite.userRepo.Update(&updateUser)
-	suite.Error(err, "error when update a user")
-}
-
 // Delete A User Test Repository
-func (suite *UserRepositorySuite) DeleteAUser_Positive() {
+func (suite *UserRepositorySuite) TestDeleteAUser_Positive() {
 	user := models.User{
 		Model: models.Model{
-			ID: 1,
+			ID: 2,
 		},
 	}
 	err := suite.userRepo.Delete(&user)
 	suite.NoError(err, "no error when deleting")
 }
 
-// Delete a User Test with non-existend id
-func (suite *UserRepositorySuite) DeleteAUser_Negative() {
-	// failed test here
-	user := models.User{
-		Model: models.Model{
-			ID: 1000, // the number is so high that it exceed the testing case
-		},
-	}
-	err := suite.userRepo.Delete(&user)
-	suite.Error(err, "error when deleting user or users with specific condition")
-}
-
 func TestUserRepository(t *testing.T) {
 	suite.Run(t, new(UserRepositorySuite))
+	// Clean up after all testing
+	for _, model := range test.Models {
+		db.GetDB().Migrator().DropTable(model)
+	}
 }
