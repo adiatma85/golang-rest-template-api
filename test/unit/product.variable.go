@@ -29,5 +29,5 @@ var willBeProduct = models.Product{
 	Model:  models.Model{},
 	Name:   "Item Random milik Korenia",
 	Price:  5000,
-	UserId: 3,
+	UserId: 1,
 }
