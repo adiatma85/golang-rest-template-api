@@ -8,7 +8,6 @@ import (
 	"github.com/adiatma85/golang-rest-template-api/internal/pkg/models"
 	"github.com/adiatma85/golang-rest-template-api/internal/pkg/repository"
 	"github.com/adiatma85/golang-rest-template-api/pkg/crypto"
-	"github.com/adiatma85/golang-rest-template-api/pkg/helpers"
 	"github.com/adiatma85/golang-rest-template-api/test"
 	"github.com/stretchr/testify/suite"
 )
@@ -24,9 +23,7 @@ type UserRepositorySuite struct {
 func TestUserRepository(t *testing.T) {
 	suite.Run(t, new(UserRepositorySuite))
 	// Clean up after all testing
-	for _, model := range test.Models {
-		db.GetDB().Migrator().DropTable(model)
-	}
+	defer test.TearDownHelper()
 }
 
 // Function to initialize the test suite
@@ -48,9 +45,10 @@ func (suite *UserRepositorySuite) TestCreateUser_Positive() {
 	createdUser, err := suite.userRepo.Create(willBeUser)
 
 	// Equal assertion
-	suite.Equal(willBeUser.Name, createdUser.Name, "user name should same")
-	suite.Equal(willBeUser.Email, createdUser.Email, "user email should same")
-	suite.Equal(willBeUser.Password, createdUser.Password, "user password should same")
+	suite.Equal(willBeUser.Name, createdUser.Name, "both of the name from dummy data and existed user should have the same value")
+	suite.Equal(willBeUser.Email, createdUser.Email, "both of the email from dummy data and existed user should have the same value")
+	// assume password hashed outside unit repository
+	suite.Equal(willBeUser.Password, createdUser.Password, "both of the password from dummy data and existed user should have the same value")
 	suite.NoError(err, "should have no error when creating new user with this parameter")
 }
 
@@ -62,30 +60,28 @@ func (suite *UserRepositorySuite) TestGetAllUser_Positive() {
 
 // Test Query User with default pagination
 func (suite *UserRepositorySuite) TestQueryUsersWithDefaultPagination() {
-	pagination, err := suite.userRepo.Query(helpers.Pagination{})
+	pagination, err := suite.userRepo.Query(pagination0)
 	// pagination dilengkapi
 	suite.Equal(10, pagination.GetLimit(), "pagination limit should have value of 10")
 	suite.Equal(1, pagination.GetPage(), "pagination page should have value of 1")
+	suite.Equal("Id desc", pagination.GetSort(), "pagination sort should have value of 'Id desc'")
 	suite.NoError(err, "should have no error when fetching users (pagination fetch)")
 }
 
 // Test Query User with pre-defined pagination
 func (suite *UserRepositorySuite) TestQueryUsersWithPreDefinedPagination() {
-	definedPagination := helpers.Pagination{
-		Limit: 5,
-		Page:  1,
-	}
-	pagination, err := suite.userRepo.Query(definedPagination)
+	pagination, err := suite.userRepo.Query(pagination1)
 	// pagination dilengkapi
-	suite.Equal(definedPagination.GetLimit(), pagination.GetLimit(), fmt.Sprintf("pagination limit should have value %d", definedPagination.GetLimit()))
-	suite.Equal(definedPagination.GetPage(), pagination.GetPage(), fmt.Sprintf("pagination page should have value %d", definedPagination.GetPage()))
+	suite.Equal(pagination1.GetLimit(), pagination.GetLimit(), fmt.Sprintf("pagination limit should have value %d", pagination1.GetLimit()))
+	suite.Equal(pagination1.GetPage(), pagination.GetPage(), fmt.Sprintf("pagination page should have value %d", pagination1.GetPage()))
+	suite.Equal("Id desc", pagination.GetSort(), "pagination sort should have value of 'Id desc'")
 	suite.NoError(err, "should have no error when fetching users (pagination fetch)")
 }
 
 // Test get user from id
 func (suite *UserRepositorySuite) TestGetByIdPositive() {
 	user, err := suite.userRepo.GetById("1")
-	suite.Equal(uint64(1), user.ID, "both of the name from client data and existed user should have the same value")
+	suite.Equal(uint64(1), user.ID, "both of the id from client data and existed user should have the same value")
 	suite.Equal(users[0].Name, user.Name, "both of the name from dummy data and existed user should have the same value")
 	suite.Equal(users[0].Email, user.Email, "both of the email from dummy data and existed user should have the same value")
 	suite.NoError(err, "should have no error when fetching user (singular fetch by id)")

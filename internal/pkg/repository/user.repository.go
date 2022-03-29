@@ -18,7 +18,7 @@ type UserRepositoryInterface interface {
 	Create(user models.User) (models.User, error)
 	GetAll() (*[]models.User, error)
 	Query(pagination helpers.Pagination) (*helpers.Pagination, error)
-	QueryWithBody(q *models.User, pagination helpers.Pagination) (*helpers.Pagination, error)
+	QueryWithCondition(q *models.User, pagination helpers.Pagination) (*helpers.Pagination, error)
 	GetByEmail(email string) (*models.User, error)
 	GetById(userId string) (*models.User, error)
 	Update(user *models.User) error
@@ -65,7 +65,7 @@ func (repo *UserRepository) Query(pagination helpers.Pagination) (*helpers.Pagin
 }
 
 // Query with existed body from client
-func (repo *UserRepository) QueryWithBody(q *models.User, pagination helpers.Pagination) (*helpers.Pagination, error) {
+func (repo *UserRepository) QueryWithCondition(q *models.User, pagination helpers.Pagination) (*helpers.Pagination, error) {
 	var users []models.User
 	outputPagination, _ := Query(q, &users, pagination, []string{"Product"})
 	return outputPagination, nil

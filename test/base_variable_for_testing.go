@@ -1,6 +1,7 @@
 package test
 
 import (
+	"github.com/adiatma85/golang-rest-template-api/internal/pkg/db"
 	"github.com/adiatma85/golang-rest-template-api/internal/pkg/models"
 )
 
@@ -21,3 +22,10 @@ var (
 		&models.Product{},
 	}
 )
+
+// TeardownHelper
+func TearDownHelper() {
+	for _, model := range Models {
+		db.GetDB().Migrator().DropTable(model)
+	}
+}

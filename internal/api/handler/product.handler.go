@@ -117,7 +117,7 @@ func (handler *ProductHandler) QueryProducts(c *gin.Context) {
 		pagination.Limit = 10
 	}
 
-	products, err := productRepo.Query(&models.Product{}, pagination)
+	products, err := productRepo.Query(pagination)
 
 	if err != nil {
 		response := response.BuildFailedResponse("failed to fetch data", err.Error())
