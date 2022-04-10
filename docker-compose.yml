@@ -1,5 +1,22 @@
 version: '3.9'
 services:
+  db:
+    container_name: golang_rest-tempalte-mysql-container
+    restart: always
+    image: mysql:5.7
+    environment:
+      # Mysql Database
+      MYSQL_DATABASE: go-tutorial-gorm
+      # Mysql Password
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      # <Port exposed> : < MySQL Port running inside container>
+      - '3306:3306'
+    volumes:
+      - my-db:/var/lib/mysql
+    networks:
+      - default
+
   app:
     container_name: golang_container
     tty: true
@@ -9,10 +26,16 @@ services:
     restart: on-failure
     volumes:
       - .:/app
+    depends_on:
+      - db
     networks:
-      - learning
+      - default
+ 
+# Names our volume
+volumes:
+  my-db:
 
 # Networks to be created to facilitate communication between containers
 networks:
-  learning:
+  default:
     driver: bridge
