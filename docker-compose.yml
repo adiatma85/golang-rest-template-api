@@ -1,0 +1,18 @@
+version: '3.9'
+services:
+  app:
+    container_name: golang_container
+    tty: true
+    build: .
+    ports:
+      - 5000:5000
+    restart: on-failure
+    volumes:
+      - .:/app
+    networks:
+      - learning
+
+# Networks to be created to facilitate communication between containers
+networks:
+  learning:
+    driver: bridge
