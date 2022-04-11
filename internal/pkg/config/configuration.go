@@ -18,55 +18,73 @@ type Configuration struct {
 
 // Struct of Database Configuration instance.
 type DatabaseConfiguration struct {
-	Driver       string
-	Dbname       string
-	Username     string
-	Password     string
-	Host         string
-	Port         string
-	MaxLifetime  int
-	MaxOpenConns int
-	MaxIdleConns int
+	Driver       string `mapstructure:"DATABASE_DRIVER"`
+	Dbname       string `mapstructure:"DATABASE_NAME"`
+	Username     string `mapstructure:"DATABASE_USERNAME"`
+	Password     string `mapstructure:"DATABASE_PASSWORD"`
+	Host         string `mapstructure:"DATABASE_HOST"`
+	Port         string `mapstructure:"DATABASE_PORT"`
+	MaxLifetime  int    `mapstructure:"DATABASE_MAX_LIFETIME"`
+	MaxOpenConns int    `mapstructure:"DATABASE_MAX_OPEN_CONNS"`
+	MaxIdleConns int    `mapstructure:"DATABASE_MAX_IDLE_CONNS"`
 }
 
 // Struct of Database for Testing Configuration instance
 type DatabaseTestConfiguration struct {
-	Driver       string
-	Dbname       string
-	Username     string
-	Password     string
-	Host         string
-	Port         string
-	MaxLifetime  int
-	MaxOpenConns int
-	MaxIdleConns int
+	Driver       string `mapstructure:"DATABASE_TEST_DRIVER"`
+	Dbname       string `mapstructure:"DATABASE_TEST_NAME"`
+	Username     string `mapstructure:"DATABASE_TEST_USERNAME"`
+	Password     string `mapstructure:"DATABASE_TEST_PASSWORD"`
+	Host         string `mapstructure:"DATABASE_TEST_HOST"`
+	Port         string `mapstructure:"DATABASE_TEST_PORT"`
+	MaxLifetime  int    `mapstructure:"DATABASE_TEST_MAX_LIFETIME"`
+	MaxOpenConns int    `mapstructure:"DATABASE_TEST_MAX_OPEN_CONNS"`
+	MaxIdleConns int    `mapstructure:"DATABASE_TEST_MAX_IDLE_CONNS"`
 }
 
 // Struct of Server Configuration instance.
 type ServerConnection struct {
-	Port        string
-	Secret      string
-	Mode        string
-	Name        string
-	ExpiresHour int64
+	Port        string `mapstructure:"SERVER_PORT"`
+	Secret      string `mapstructure:"SERVER_SECRET"`
+	Mode        string `mapstructure:"SERVER_MODE"`
+	Name        string `mapstructure:"SERVER_NAME"`
+	ExpiresHour int64  `mapstructure:"SERVER_EXPIRES_HOUR"`
 }
 
 // Setup the configuration
 func Setup(configPath string) {
-	var configuration *Configuration
+	var (
+		databaseConfiguration     DatabaseConfiguration
+		databaseTestConfiguration DatabaseTestConfiguration
+		serverConfiguration       ServerConnection
+	)
 
 	viper.SetConfigFile(configPath)
-	viper.SetConfigType("yaml")
+	viper.SetConfigType("env")
 
 	if err := viper.ReadInConfig(); err != nil {
 		log.Fatalf("Error reading config file, %s", err)
 	}
 
-	err := viper.Unmarshal(&configuration)
+	unmarshalConfiguration(&databaseConfiguration)
+	unmarshalConfiguration(&databaseTestConfiguration)
+	unmarshalConfiguration(&serverConfiguration)
+
+	configuration := Configuration{
+		Database:      databaseConfiguration,
+		Database_Test: databaseTestConfiguration,
+		Server:        serverConfiguration,
+	}
+
+	Config = &configuration
+}
+
+// Helper to unmarshal
+func unmarshalConfiguration(configuration interface{}) {
+	err := viper.Unmarshal(configuration)
 	if err != nil {
 		log.Fatalf("Unable to decode into struct, %v", err)
 	}
-	Config = configuration
 }
 
 // GetConfig return the configuration instance

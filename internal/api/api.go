@@ -21,7 +21,7 @@ func SetConfiguration(configPath string) {
 // Run the new API with designated configuration
 func Run(configPath string) {
 	if configPath == "" {
-		configPath = "config.yaml"
+		configPath = ".env"
 	}
 	SetConfiguration(configPath)
 	conf := config.GetConfig()

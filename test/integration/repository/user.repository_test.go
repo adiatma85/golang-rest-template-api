@@ -29,7 +29,7 @@ func TestUserRepository(t *testing.T) {
 // Function to initialize the test suite
 func (suite *UserRepositorySuite) SetupSuite() {
 	// Initialize configuration
-	test.SetupInitialize("../../../config.yaml")
+	test.SetupInitialize("../../../.env")
 	db.SetupTestingDb(test.Host, test.Username, test.Password, test.Port, test.Database)
 	suite.userRepo = repository.GetUserRepository()
 
