@@ -11,9 +11,9 @@ var Config *Configuration
 // Struct of Configuration instance.
 // It include Database and Server configuration
 type Configuration struct {
-	Database     DatabaseConfiguration
-	DatabaseTest DatabaseTestConfiguration
-	Server       ServerConnection
+	Database      DatabaseConfiguration
+	Database_Test DatabaseTestConfiguration
+	Server        ServerConnection
 }
 
 // Struct of Database Configuration instance.
@@ -29,6 +29,7 @@ type DatabaseConfiguration struct {
 	MaxIdleConns int
 }
 
+// Struct of Database for Testing Configuration instance
 type DatabaseTestConfiguration struct {
 	Driver       string
 	Dbname       string

@@ -18,11 +18,11 @@ var (
 
 	// Database configuration
 	// Change configuration in here
-	Database = "go-unit-integration"
-	Username = "root"
-	Password = "root"
-	Host     = "localhost"
-	Port     = "3306"
+	Database string
+	Username string
+	Password string
+	Host     string
+	Port     string
 
 	// Models that involved
 	Models = []interface{}{
@@ -35,12 +35,12 @@ var (
 func SetupInitialize(path string) {
 	api.SetConfiguration(path)
 	configuration := config.GetConfig()
-	fmt.Println(configuration.DatabaseTest.Dbname)
-	Database = configuration.DatabaseTest.Dbname
-	Username = configuration.DatabaseTest.Username
-	Password = configuration.DatabaseTest.Password
-	Host = configuration.DatabaseTest.Host
-	Port = configuration.DatabaseTest.Port
+	fmt.Println(configuration.Database_Test.Dbname)
+	Database = configuration.Database_Test.Dbname
+	Username = configuration.Database_Test.Username
+	Password = configuration.Database_Test.Password
+	Host = configuration.Database_Test.Host
+	Port = configuration.Database_Test.Port
 }
 
 // TeardownHelper
