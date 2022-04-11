@@ -6,6 +6,14 @@ import (
 	"gorm.io/gorm"
 )
 
+// User Type
+type userType string
+
+const (
+	ADMIN userType = "ADMIN"
+	USER  userType = "USER"
+)
+
 // Struct for User Models
 type User struct {
 	Model
@@ -13,6 +21,7 @@ type User struct {
 	Email    string    `gorm:"type:varchar(100);unique;" json:"email" validation:"email"`
 	Password string    `gorm:"type:varchar(100)" json:"-" validation:"password"`
 	Product  []Product `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	UserType userType  `gorm:"type:varchar(10);default:ADMIN" json:"user_type"`
 }
 
 // Renew Created_at and Updated_at before creating
