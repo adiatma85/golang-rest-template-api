@@ -105,11 +105,11 @@ func (handler *AuthHandler) AuthRegister(c *gin.Context) {
 		tokenHelper := crypto.GetJWTCrypto()
 		token, err := tokenHelper.GenerateToken(fmt.Sprint(newUser.ID))
 		if err != nil {
-			response := response.BuildFailedResponse("wrong credential", err.Error())
+			response := response.BuildFailedResponse("failed to generate token", err.Error())
 			c.AbortWithStatusJSON(http.StatusInternalServerError, response)
 			return
 		}
-		response := response.BuildSuccessResponse("success login", map[string]interface{}{
+		response := response.BuildSuccessResponse("success register new user", map[string]interface{}{
 			"token": token,
 		})
 		c.JSON(http.StatusOK, response)
