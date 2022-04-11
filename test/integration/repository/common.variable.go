@@ -1,4 +1,4 @@
-package unit
+package repository
 
 import "github.com/adiatma85/golang-rest-template-api/pkg/helpers"
 

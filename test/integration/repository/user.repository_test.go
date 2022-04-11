@@ -1,4 +1,4 @@
-package unit
+package repository
 
 import (
 	"fmt"
@@ -29,6 +29,7 @@ func TestUserRepository(t *testing.T) {
 // Function to initialize the test suite
 func (suite *UserRepositorySuite) SetupSuite() {
 	// Initialize configuration
+	// test.SetupInitialize("../../config.yaml")
 	db.SetupTestingDb(test.Host, test.Username, test.Password, test.Port, test.Database)
 	suite.userRepo = repository.GetUserRepository()
 
@@ -40,7 +41,6 @@ func (suite *UserRepositorySuite) SetupSuite() {
 
 // Create User instance Test
 func (suite *UserRepositorySuite) TestCreateUser_Positive() {
-
 	// Creating user
 	createdUser, err := suite.userRepo.Create(willBeUser)
 

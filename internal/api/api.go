@@ -10,7 +10,8 @@ import (
 )
 
 // Set configuration
-func setConfiguration(configPath string) {
+// Change this func to "exported"  to make Test package can access it
+func SetConfiguration(configPath string) {
 	config.Setup(configPath)
 	db.SetupDB()
 	gin.SetMode(config.GetConfig().Server.Mode)
@@ -22,7 +23,7 @@ func Run(configPath string) {
 	if configPath == "" {
 		configPath = "config.yaml"
 	}
-	setConfiguration(configPath)
+	SetConfiguration(configPath)
 	conf := config.GetConfig()
 
 	// Routing
