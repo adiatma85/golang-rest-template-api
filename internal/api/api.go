@@ -12,8 +12,13 @@ import (
 // Set configuration
 // Change this func to "exported"  to make Test package can access it
 func SetConfiguration(configPath string) {
+	// Setup config from path
+	// Default is .env in root folder
 	config.Setup(configPath)
+	// Calling setup db
 	db.SetupDB()
+	// Calling cloudinary storage
+	config.InitializeCloudinary()
 	gin.SetMode(config.GetConfig().Server.Mode)
 
 }

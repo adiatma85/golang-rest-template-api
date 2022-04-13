@@ -3,6 +3,7 @@ module github.com/adiatma85/golang-rest-template-api
 go 1.17
 
 require (
+	github.com/cloudinary/cloudinary-go v1.7.0
 	github.com/gin-gonic/gin v1.7.7
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/mashingan/smapping v0.1.13
@@ -15,6 +16,7 @@ require (
 )
 
 require (
+	github.com/creasty/defaults v1.6.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
@@ -23,6 +25,8 @@ require (
 	github.com/go-playground/validator/v10 v10.10.0 // indirect
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/google/uuid v1.3.0 // indirect
+	github.com/gorilla/schema v1.2.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.11.0 // indirect
