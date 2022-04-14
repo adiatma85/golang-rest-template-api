@@ -21,7 +21,7 @@ type User struct {
 	Email    string    `gorm:"type:varchar(100);unique;" json:"email" validation:"email"`
 	Password string    `gorm:"type:varchar(100)" json:"-" validation:"password"`
 	Product  []Product `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	UserType userType  `gorm:"type:varchar(10);default:ADMIN" json:"user_type"`
+	UserType userType  `gorm:"type:varchar(10);default:USER" json:"user_type"`
 }
 
 // Renew Created_at and Updated_at before creating
