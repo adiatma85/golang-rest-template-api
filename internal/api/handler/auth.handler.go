@@ -80,6 +80,7 @@ func (handler *AuthHandler) AuthLogin(c *gin.Context) {
 
 // Func to handle Auth Register
 func (handler *AuthHandler) AuthRegister(c *gin.Context) {
+	// var uploadSecureUrl = ""
 	var registerRequest validator.RegisterRequest
 	err := c.ShouldBind(&registerRequest)
 
@@ -89,6 +90,18 @@ func (handler *AuthHandler) AuthRegister(c *gin.Context) {
 		return
 	}
 
+	// avatarImageFile, isExist := helpers.GinFileHandlerFunc(c, "avatar")
+
+	// Jika memang ada, maka upload image tersebut melalui cloudinary
+	// if isExist {
+	// 	uploadSecureUrl, err = helpers.CloudinaryImageUploadHelper(avatarImageFile)
+	// 	if err != nil {
+	// 		response := response.BuildFailedResponse("failed to register new user", err.Error())
+	// 		c.AbortWithStatusJSON(http.StatusBadRequest, response)
+	// 		return
+	// 	}
+	// }
+
 	userRepo := repository.GetUserRepository()
 	passwordHelper := crypto.GetPasswordCryptoHelper()
 	userModel := &models.User{}
@@ -96,6 +109,7 @@ func (handler *AuthHandler) AuthRegister(c *gin.Context) {
 	// smapping the struct
 	smapping.FillStruct(userModel, smapping.MapFields(&registerRequest))
 	userModel.Password, _ = passwordHelper.HashAndSalt([]byte(registerRequest.Password))
+	// userModel.Avatar = uploadSecureUrl
 
 	if newUser, err := userRepo.Create(*userModel); err != nil {
 		response := response.BuildFailedResponse("failed to register", err.Error())
