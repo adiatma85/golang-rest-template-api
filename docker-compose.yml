@@ -9,9 +9,9 @@ services:
     image: mysql:5.7
     environment:
       # Mysql Database
-      MYSQL_DATABASE: "${DATABASE_NAME}"
+      - MYSQL_DATABASE="${DATABASE_NAME}"
       # Mysql Password
-      MYSQL_ROOT_PASSWORD: "${DATABASE_PASSWORD}"
+      - MYSQL_ROOT_PASSWORD="${DATABASE_PASSWORD}"
     ports:
       # <Port exposed> : < MySQL Port running inside container>
       - '3306:3306'
@@ -28,7 +28,7 @@ services:
       - 5000:5000
     restart: on-failure
     volumes:
-      - .:/app
+      -  api:/usr/src/app/
     depends_on:
       - db
     networks:
@@ -36,6 +36,7 @@ services:
  
 # Names our volume
 volumes:
+  api:
   my-db:
 
 # Networks to be created to facilitate communication between containers
