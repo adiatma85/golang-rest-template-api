@@ -1,3 +1,6 @@
+# Reference for docker-compose
+# https://levelup.gitconnected.com/dockerized-crud-restful-api-with-go-gorm-jwt-postgresql-mysql-and-testing-61d731430bd8
+
 version: '3.9'
 services:
   db:
@@ -6,9 +9,9 @@ services:
     image: mysql:5.7
     environment:
       # Mysql Database
-      MYSQL_DATABASE: go-tutorial-gorm
+      MYSQL_DATABASE: "${DATABASE_NAME}"
       # Mysql Password
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: "${DATABASE_PASSWORD}"
     ports:
       # <Port exposed> : < MySQL Port running inside container>
       - '3306:3306'
