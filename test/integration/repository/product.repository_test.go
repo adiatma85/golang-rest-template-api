@@ -1,4 +1,4 @@
-package unit
+package repository
 
 import (
 	"fmt"
@@ -30,6 +30,8 @@ func TestProductRepository(t *testing.T) {
 
 // Setup Suite
 func (suite *ProductRepositorySuite) SetupSuite() {
+	// Initialize configuration
+	test.SetupInitialize("../../../.env")
 	db.SetupTestingDb(test.Host, test.Username, test.Password, test.Port, test.Database)
 
 	// User Repository here because product can not be an orphan

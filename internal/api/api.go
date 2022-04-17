@@ -10,9 +10,15 @@ import (
 )
 
 // Set configuration
-func setConfiguration(configPath string) {
+// Change this func to "exported"  to make Test package can access it
+func SetConfiguration(configPath string) {
+	// Setup config from path
+	// Default is .env in root folder
 	config.Setup(configPath)
+	// Calling setup db
 	db.SetupDB()
+	// Calling cloudinary storage
+	config.InitializeCloudinary()
 	gin.SetMode(config.GetConfig().Server.Mode)
 
 }
@@ -20,9 +26,9 @@ func setConfiguration(configPath string) {
 // Run the new API with designated configuration
 func Run(configPath string) {
 	if configPath == "" {
-		configPath = "config.yaml"
+		configPath = ".env"
 	}
-	setConfiguration(configPath)
+	SetConfiguration(configPath)
 	conf := config.GetConfig()
 
 	// Routing
