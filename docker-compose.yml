@@ -4,7 +4,7 @@
 version: '3.9'
 services:
   db:
-    container_name: golang_rest-tempalte-mysql-container
+    container_name: golang_rest-template-mysql-container
     restart: always
     image: mysql:5.7
     environment:
