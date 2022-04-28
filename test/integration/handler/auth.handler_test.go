@@ -12,8 +12,10 @@ import (
 	"github.com/adiatma85/golang-rest-template-api/internal/api/handler"
 	"github.com/adiatma85/golang-rest-template-api/internal/pkg/db"
 	"github.com/adiatma85/golang-rest-template-api/internal/pkg/models"
+	appRepository "github.com/adiatma85/golang-rest-template-api/internal/pkg/repository"
 	"github.com/adiatma85/golang-rest-template-api/internal/pkg/validator"
-	responseHelper "github.com/adiatma85/golang-rest-template-api/pkg/response"
+	"github.com/adiatma85/golang-rest-template-api/pkg/crypto"
+	appResponseHelper "github.com/adiatma85/golang-rest-template-api/pkg/response"
 	"github.com/adiatma85/golang-rest-template-api/test"
 	"github.com/adiatma85/golang-rest-template-api/test/mocks/helpers"
 	"github.com/adiatma85/golang-rest-template-api/test/mocks/repository"
@@ -82,57 +84,65 @@ func (suite *AuthHandlerSuite) TearDownSuite() {
 }
 
 // Func to mock test Login Success
-// func (suite *AuthHandlerSuite) TestLoginPositive() {
-// 	// an example login request for the test
-// 	loginData := validator.LoginRequest{
-// 		Email:    "admin2@admin.com",
-// 		Password: "password",
-// 	}
+func (suite *AuthHandlerSuite) TestLoginPositive() {
+	// an example login request for the test
+	loginData := validator.LoginRequest{
+		Email:    "admin2@admin.com",
+		Password: "password",
+	}
 
-// 	// example of existed user data
-// 	existedUser := models.User{
-// 		Name:     "admin",
-// 		Email:    "admin2@admin.com",
-// 		Password: "password",
-// 		Product:  []models.Product{},
-// 	}
+	// example of existed user data
+	existedUser := models.User{
+		Name:     "admin",
+		Email:    "admin2@admin.com",
+		Password: "password",
+		Product:  []models.Product{},
+	}
 
-// 	// Example of token
-// 	token := "random long token"
+	var err error
 
-// 	// Insert random user to database
-// 	userRepository := appRepository.GetUserRepository()
-// 	_, err := userRepository.Create(existedUser)
-// 	suite.NoError(err, "can not inserting dummy data for user")
+	// Example of token
+	token := "random long token"
 
-// 	// Specify that inside handler's AuthLogin method
-// 	// repository's GetByemail method will be called
-// 	suite.repository.On("GetByEmail", loginData.Email).Return(existedUser, nil)
+	// Insert random user to database
+	userRepository := appRepository.GetUserRepository()
+	// Change the password to hash and salt
+	passwordHelper := crypto.GetPasswordCryptoHelper()
+	existedUser.Password, err = passwordHelper.HashAndSalt([]byte(existedUser.Password))
+	suite.NoError(err, "can not change dummy password")
 
-// 	// Specify that inside handler's AuthLogin method
-// 	// passwordHelper's ComparePassword method will be called
-// 	suite.passwordHelper.On("ComparePassword", existedUser.Password, []byte(loginData.Password)).Return(true)
+	// Insert to user repository
+	_, err = userRepository.Create(existedUser)
+	suite.NoError(err, "can not inserting dummy data for user")
 
-// 	// Specify that inside handler's AuthLogin method
-// 	// jwtHelper's GenerateToken method will be called
-// 	suite.jwtHelper.On("GenerateToken", fmt.Sprint(existedUser.ID)).Return(token, nil)
+	// Specify that inside handler's AuthLogin method
+	// repository's GetByemail method will be called
+	suite.repository.On("GetByEmail", loginData.Email).Return(existedUser, nil)
 
-// 	// Marshalling and some assertion
-// 	requestBody, err := json.Marshal(&loginData)
-// 	suite.NoError(err, "can not marshal struct to json")
+	// Specify that inside handler's AuthLogin method
+	// passwordHelper's ComparePassword method will be called
+	suite.passwordHelper.On("ComparePassword", existedUser.Password, []byte(loginData.Password)).Return(true)
 
-// 	// Calling the testing server given the provided request body
-// 	response, err := http.Post(fmt.Sprintf("%s/api/v1/auth/login", suite.testingServer.URL), "application/json", bytes.NewBuffer(requestBody))
-// 	suite.NoError(err, "error when doing POST to login endpoints")
-// 	defer response.Body.Close()
+	// Specify that inside handler's AuthLogin method
+	// jwtHelper's GenerateToken method will be called
+	suite.jwtHelper.On("GenerateToken", fmt.Sprint(existedUser.ID)).Return(token, nil)
 
-// 	// unmarshalling the response
-// 	responseBody := responseHelper.Response{}
-// 	json.NewDecoder(response.Body).Decode(&responseBody)
+	// Marshalling and some assertion
+	requestBody, err := json.Marshal(&loginData)
+	suite.NoError(err, "can not marshal struct to json")
 
-// 	// running assertions to make sure that our method does the correct thing
-// 	suite.Equal("success login", responseBody.Message)
-// }
+	// Calling the testing server given the provided request body
+	response, err := http.Post(fmt.Sprintf("%s/api/v1/auth/login", suite.testingServer.URL), "application/json", bytes.NewBuffer(requestBody))
+	suite.NoError(err, "error when doing POST to login endpoints")
+	defer response.Body.Close()
+
+	// unmarshalling the response
+	responseBody := appResponseHelper.Response{}
+	json.NewDecoder(response.Body).Decode(&responseBody)
+
+	// running assertions to make sure that our method does the correct thing
+	suite.Equal("success login", responseBody.Message)
+}
 
 func (suite *AuthHandlerSuite) TestRegisterPositive() {
 	// an example register request for the test
@@ -176,7 +186,7 @@ func (suite *AuthHandlerSuite) TestRegisterPositive() {
 	defer response.Body.Close()
 
 	// Unmarshalling the response
-	responseBody := responseHelper.Response{}
+	responseBody := appResponseHelper.Response{}
 	json.NewDecoder(response.Body).Decode(&responseBody)
 
 	// Running assertions to make sure that our method does the correct thing
