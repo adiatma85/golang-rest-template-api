@@ -3,7 +3,6 @@ module github.com/adiatma85/golang-rest-template-api
 go 1.17
 
 require (
-	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/cloudinary/cloudinary-go v1.7.0
 	github.com/gin-gonic/gin v1.7.7
 	github.com/golang-jwt/jwt v3.2.2+incompatible
