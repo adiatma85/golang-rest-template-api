@@ -76,6 +76,12 @@ func SetupTestingDb(host, username, password, port, database string) {
 	migration()
 }
 
+// Setup for Mocking database
+func SetupMockingTestDb(db *gorm.DB) {
+	// Mock created at unit testing files
+	DB = db
+}
+
 // AutoMigrate project models
 func migration() {
 	DB.AutoMigrate(&models.User{})
