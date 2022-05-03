@@ -9,11 +9,6 @@ import (
 	"gorm.io/gorm"
 )
 
-// Common variable
-var (
-	err error
-)
-
 // Common function to create in db
 func Create(value interface{}) error {
 	return db.GetDB().Create(value).Error

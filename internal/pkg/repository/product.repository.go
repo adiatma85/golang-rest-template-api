@@ -40,9 +40,6 @@ func GetProductRepository() ProductRepositoryInterface {
 
 // Func to Create Product
 func (repo *ProductRepository) Create(product models.Product) (models.Product, error) {
-	if err != nil {
-		return models.Product{}, err
-	}
 	err := Create(&product)
 	// If error when transaction to database i.e duplicate email
 	if err != nil {
@@ -102,7 +99,7 @@ func (repo *ProductRepository) Update(user *models.Product) error {
 
 // Delete User By Model defined in controller
 func (repo *ProductRepository) Delete(user *models.Product) error {
-	_, err = DeleteByModel(user)
+	_, err := DeleteByModel(user)
 	if err != nil {
 		return err
 	}
@@ -111,7 +108,7 @@ func (repo *ProductRepository) Delete(user *models.Product) error {
 
 // Delete User by multiple ids
 func (repo *ProductRepository) DeleteWithIds(ids []uint64) error {
-	_, err = DeleteByIDS(models.Product{}, ids)
+	_, err := DeleteByIDS(models.Product{}, ids)
 	if err != nil {
 		return err
 	}

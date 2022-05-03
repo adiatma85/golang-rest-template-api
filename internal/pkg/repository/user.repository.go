@@ -96,7 +96,8 @@ func (repo *UserRepository) GetById(userId string) (*models.User, error) {
 func (repo *UserRepository) Update(user *models.User) error {
 	if user.Password != "" {
 		passwordHelper := crypto.GetPasswordCryptoHelper()
-		user.Password, err = passwordHelper.HashAndSalt([]byte(user.Password))
+		hashedPassword, err := passwordHelper.HashAndSalt([]byte(user.Password))
+		user.Password = hashedPassword
 		if err != nil {
 			return err
 		}
@@ -106,7 +107,7 @@ func (repo *UserRepository) Update(user *models.User) error {
 
 // Delete User By Model defined in controller
 func (repo *UserRepository) Delete(user *models.User) error {
-	_, err = DeleteByModel(user)
+	_, err := DeleteByModel(user)
 	if err != nil {
 		return err
 	}
@@ -115,7 +116,7 @@ func (repo *UserRepository) Delete(user *models.User) error {
 
 // Delete User by multiple ids
 func (repo *UserRepository) DeleteWithIds(ids []uint64) error {
-	_, err = DeleteByIDS(models.User{}, ids)
+	_, err := DeleteByIDS(models.User{}, ids)
 	if err != nil {
 		return err
 	}
