@@ -39,9 +39,6 @@ func GetUserRepository() UserRepositoryInterface {
 
 // Func to Create User
 func (repo *UserRepository) Create(user models.User) (models.User, error) {
-	if err != nil {
-		return models.User{}, err
-	}
 	err := Create(&user)
 	// If error when transaction to database i.e duplicate email
 	if err != nil {
