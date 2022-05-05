@@ -107,14 +107,10 @@ func (handler *ProductHandler) QueryProducts(c *gin.Context) {
 
 	if isPageQueryExist {
 		pagination.Page, _ = strconv.Atoi(queryPage)
-	} else {
-		pagination.Page = 1
 	}
 
 	if isPageLimitExist {
 		pagination.Limit, _ = strconv.Atoi(queryPageLimit)
-	} else {
-		pagination.Limit = 10
 	}
 
 	products, err := productRepo.Query(pagination)
