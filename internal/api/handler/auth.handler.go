@@ -18,7 +18,7 @@ var (
 	authHandler *AuthHandler
 )
 
-// Func to implement contract of authHandler
+// Struct to implement contract of authHandler
 type AuthHandler struct{}
 
 // Contract of Auth Handler
@@ -43,7 +43,7 @@ func (handler *AuthHandler) AuthLogin(c *gin.Context) {
 	// Error when binding in validator
 	if err != nil {
 		response := response.BuildFailedResponse("failed to login", err.Error())
-		c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+		c.AbortWithStatusJSON(http.StatusBadRequest, response)
 		return
 	}
 
@@ -51,14 +51,14 @@ func (handler *AuthHandler) AuthLogin(c *gin.Context) {
 	// If user doesn't exist
 	if user, err := userRepo.GetByEmail(loginRequest.Email); err != nil {
 		response := response.BuildFailedResponse("failed to login", err.Error())
-		c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+		c.AbortWithStatusJSON(http.StatusBadRequest, response)
 		return
 	} else {
 		// Wrong password
 		passwordHelper := crypto.GetPasswordCryptoHelper()
 		if !passwordHelper.ComparePassword(user.Password, []byte(loginRequest.Password)) {
 			response := response.BuildFailedResponse("wrong credential", err.Error())
-			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+			c.AbortWithStatusJSON(http.StatusBadRequest, response)
 			return
 		}
 
@@ -67,7 +67,7 @@ func (handler *AuthHandler) AuthLogin(c *gin.Context) {
 		token, err := tokenHelper.GenerateToken(fmt.Sprint(user.ID))
 		if err != nil {
 			response := response.BuildFailedResponse("wrong credential", err.Error())
-			c.AbortWithStatusJSON(http.StatusInternalServerError, response)
+			c.AbortWithStatusJSON(http.StatusBadRequest, response)
 			return
 		}
 		response := response.BuildSuccessResponse("success login", map[string]interface{}{
@@ -86,7 +86,7 @@ func (handler *AuthHandler) AuthRegister(c *gin.Context) {
 
 	if err != nil {
 		response := response.BuildFailedResponse("failed to register", err.Error())
-		c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+		c.AbortWithStatusJSON(http.StatusBadRequest, response)
 		return
 	}
 
@@ -113,7 +113,7 @@ func (handler *AuthHandler) AuthRegister(c *gin.Context) {
 
 	if newUser, err := userRepo.Create(*userModel); err != nil {
 		response := response.BuildFailedResponse("failed to register", err.Error())
-		c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+		c.AbortWithStatusJSON(http.StatusBadRequest, response)
 		return
 	} else {
 		tokenHelper := crypto.GetJWTCrypto()
