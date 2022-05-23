@@ -50,9 +50,9 @@ func (repo *ProductRepository) Create(product models.Product) (models.Product, e
 
 // Func to get All User without Pagination
 func (repo *ProductRepository) GetAll() (*[]models.Product, error) {
-	var users []models.Product
-	err := Find(&models.Product{}, &users, []string{"User"}, "id asc")
-	return &users, err
+	var products []models.Product
+	err := Find(&models.Product{}, &products, []string{"User"}, "id asc")
+	return &products, err
 }
 
 // Func to get Query of WHERE with Pagination
