@@ -39,7 +39,7 @@ func GetProductHandler() ProductHandlerInterface {
 	return productHandler
 }
 
-// Func to Create User, similar to #Register
+// Func to Create Product, similar to #Register
 func (handler *ProductHandler) CreateProduct(c *gin.Context) {
 	var createProductRequest validator.CreateProductRequest
 	err := c.ShouldBind(&createProductRequest)
@@ -67,7 +67,7 @@ func (handler *ProductHandler) CreateProduct(c *gin.Context) {
 	}
 }
 
-// Func to GetAll User without in server pagination
+// Func to GetAll Product without in server pagination
 func (handler *ProductHandler) GetAllProduct(c *gin.Context) {
 	productRepo := repository.GetProductRepository()
 
@@ -179,8 +179,8 @@ func (handler *ProductHandler) DeleteProductsWithIds(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, response)
 		return
 	}
-	userRepo := repository.GetUserRepository()
-	err = userRepo.DeleteWithIds(deleteRequest.Ids)
+	productRepo := repository.GetProductRepository()
+	err = productRepo.DeleteWithIds(deleteRequest.Ids)
 	if err != nil {
 		response := response.BuildFailedResponse("failed to delete products", err.Error())
 		c.AbortWithStatusJSON(http.StatusInternalServerError, response)

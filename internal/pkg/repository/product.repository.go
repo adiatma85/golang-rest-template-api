@@ -48,7 +48,7 @@ func (repo *ProductRepository) Create(product models.Product) (models.Product, e
 	return product, nil
 }
 
-// Func to get All User without Pagination
+// Func to get All Product without Pagination
 func (repo *ProductRepository) GetAll() (*[]models.Product, error) {
 	var products []models.Product
 	err := Find(&models.Product{}, &products, []string{"User"}, "id asc")
@@ -69,44 +69,44 @@ func (repo *ProductRepository) QueryWithCondition(q *models.Product, pagination 
 	return outputPagination, nil
 }
 
-// Func to get single user from email
+// Func to get single product from email
 func (repo *ProductRepository) GetByEmail(email string) (*models.Product, error) {
-	var user models.Product
+	var product models.Product
 	where := models.Product{}
-	_, err := First(&where, &user, []string{"User"})
+	_, err := First(&where, &product, []string{"User"})
 	if err != nil {
 		return nil, err
 	}
-	return &user, nil
+	return &product, nil
 }
 
-// Func to Get User By Id
-func (repo *ProductRepository) GetById(userId string) (*models.Product, error) {
-	var user models.Product
+// Func to Get Product By Id
+func (repo *ProductRepository) GetById(productId string) (*models.Product, error) {
+	var product models.Product
 	where := models.Product{}
-	where.ID, _ = strconv.ParseUint(userId, 10, 64)
-	_, err := First(&where, &user, []string{"User"})
+	where.ID, _ = strconv.ParseUint(productId, 10, 64)
+	_, err := First(&where, &product, []string{"User"})
 	if err != nil {
 		return nil, err
 	}
-	return &user, nil
+	return &product, nil
 }
 
-// Function to update user according to user schema defined
-func (repo *ProductRepository) Update(user *models.Product) error {
-	return Save(user)
+// Function to update product according to product schema defined
+func (repo *ProductRepository) Update(product *models.Product) error {
+	return Save(product)
 }
 
-// Delete User By Model defined in controller
-func (repo *ProductRepository) Delete(user *models.Product) error {
-	_, err := DeleteByModel(user)
+// Delete Product By Model defined in controller
+func (repo *ProductRepository) Delete(product *models.Product) error {
+	_, err := DeleteByModel(product)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-// Delete User by multiple ids
+// Delete Product by multiple ids
 func (repo *ProductRepository) DeleteWithIds(ids []uint64) error {
 	_, err := DeleteByIDS(models.Product{}, ids)
 	if err != nil {
