@@ -139,7 +139,7 @@ func (handler *ProductHandler) UpdateSpecificProduct(c *gin.Context) {
 	updateModel := &models.Product{}
 
 	// smapping the update request to models
-	updateModel.ID, _ = strconv.ParseUint(c.Param("productId"), 10, 64)
+	updateModel.ID = helpers.ConvertStringtoUint(c.Param("productId"))
 	smapping.FillStruct(updateModel, smapping.MapFields(&updateRequest))
 
 	productRepo := repository.GetProductRepository()
@@ -157,7 +157,7 @@ func (handler *ProductHandler) UpdateSpecificProduct(c *gin.Context) {
 // Func to Delete Specific Product
 func (handler *ProductHandler) DeleteSpecificProduct(c *gin.Context) {
 	deleteModel := &models.Product{}
-	deleteModel.ID, _ = strconv.ParseUint(c.Param("productId"), 10, 64)
+	deleteModel.ID = helpers.ConvertStringtoUint(c.Param("productId"))
 
 	productRepo := repository.GetProductRepository()
 
