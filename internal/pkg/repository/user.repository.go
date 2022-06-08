@@ -1,8 +1,6 @@
 package repository
 
 import (
-	"strconv"
-
 	"github.com/adiatma85/golang-rest-template-api/internal/pkg/models"
 	"github.com/adiatma85/golang-rest-template-api/pkg/crypto"
 	"github.com/adiatma85/golang-rest-template-api/pkg/helpers"
@@ -84,7 +82,7 @@ func (repo *UserRepository) GetByEmail(email string) (*models.User, error) {
 func (repo *UserRepository) GetById(userId string) (*models.User, error) {
 	var user models.User
 	where := models.User{}
-	where.ID, _ = strconv.ParseUint(userId, 10, 64)
+	where.ID = helpers.ConvertStringtoUint(userId)
 	_, err := First(&where, &user, []string{"Product"})
 	if err != nil {
 		return nil, err

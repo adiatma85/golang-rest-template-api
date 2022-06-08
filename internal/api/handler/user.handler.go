@@ -7,7 +7,6 @@ import (
 	"github.com/adiatma85/golang-rest-template-api/internal/pkg/models"
 	"github.com/adiatma85/golang-rest-template-api/internal/pkg/repository"
 	"github.com/adiatma85/golang-rest-template-api/internal/pkg/validator"
-	"github.com/adiatma85/golang-rest-template-api/pkg/crypto"
 	"github.com/adiatma85/golang-rest-template-api/pkg/helpers"
 	"github.com/adiatma85/golang-rest-template-api/pkg/response"
 	"github.com/gin-gonic/gin"
@@ -52,26 +51,13 @@ func (handler *UserHandler) CreateUser(c *gin.Context) {
 		return
 	}
 
-	// avatarImageFile, isExist := helpers.GinFileHandlerFunc(c, "avatar")
-
-	// Jika memang ada, maka upload image tersebut melalui cloudinary
-	// if isExist {
-	// 	uploadSecureUrl, err = helpers.CloudinaryImageUploadHelper(avatarImageFile)
-	// 	if err != nil {
-	// 		response := response.BuildFailedResponse("failed to register new user", err.Error())
-	// 		c.AbortWithStatusJSON(http.StatusBadRequest, response)
-	// 		return
-	// 	}
-	// }
-
 	userRepo := repository.GetUserRepository()
-	passwordHelper := crypto.GetPasswordCryptoHelper()
+	// passwordHelper := crypto.GetPasswordCryptoHelper()
 	userModel := &models.User{}
 
 	// smapping the struct
 	smapping.FillStruct(userModel, smapping.MapFields(&createUserRequest))
-	userModel.Password, _ = passwordHelper.HashAndSalt([]byte(createUserRequest.Password))
-	// userModel.Avatar = uploadSecureUrl
+	// userModel.Password, _ = passwordHelper.HashAndSalt([]byte(createUserRequest.Password))
 
 	if newUser, err := userRepo.Create(*userModel); err != nil {
 		response := response.BuildFailedResponse("failed to register", err.Error())
